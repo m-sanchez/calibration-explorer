@@ -1,0 +1,22 @@
+{
+  "name": "calibration-explorer",
+  "version": "0.1.0",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "node --test tests/*.test.ts",
+    "build:space": "npm run build && node scripts/build-space.ts"
+  },
+  "dependencies": {
+    "@m-sanchez/calibrated": "git+https://github.com/m-sanchez/calibrated.git#6e74b92dfc5c545a1cd926f96bd5bc44ae6c887b"
+  },
+  "devDependencies": {
+    "vite": "8.3.2",
+    "typescript": "7.0.2",
+    "@types/node": "26.6.4"
+  }
+}

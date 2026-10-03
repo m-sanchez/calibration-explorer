@@ -1,0 +1,5 @@
+id,confidence,correct,split,group
+example-01,0.9,true,exploration,example
+example-02,0.9,false,exploration,example
+example-03,0.7,true,exploration,example
+example-04,0.6,false,exploration,example

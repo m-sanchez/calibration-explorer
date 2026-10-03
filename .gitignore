@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.venv/
+.cache/
+__pycache__/
+*.pyc
+.space-build/
+review/*
+!review/digits-assessment.html
+!review/digits-experiment.json
+!review/digits-predictions.csv
+release/artifacts/
+release/RELEASE_CHECKLIST.md
+release/PUBLIC_COPY.md
+scripts/package-space.ts

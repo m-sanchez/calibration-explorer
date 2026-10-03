@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "name": "Logit format example (six rows, not evaluation evidence)",
+  "classes": ["negative", "positive"],
+  "provenance": {"kind": "synthetic-template", "note": "Replace these illustrative rows with your own predictions."},
+  "rows": [
+    {"id":"cal-01","logits":[1,3],"label":1,"split":"calibration"},
+    {"id":"cal-02","logits":[3,1],"label":1,"split":"calibration"},
+    {"id":"policy-01","logits":[1,2],"label":1,"split":"policy_validation"},
+    {"id":"policy-02","logits":[3,1],"label":0,"split":"policy_validation"},
+    {"id":"test-01","logits":[1,3],"label":1,"split":"test"},
+    {"id":"test-02","logits":[3,1],"label":1,"split":"test"}
+  ]
+}
