@@ -1,6 +1,6 @@
 # Agent audit and optional usability round
 
-The owner has no human participants and requested self-testing. The immediate work is **five agent-led scenario audits using generated fixtures**, not five people or independent-user validation. See [actual audit results](agent-audit.md). Run `node docs/usability/run-agent-audit.ts` from the repository root; generated exports go to ignored `.cache/agent-audit/`.
+This folder records **five agent-led scenario audits using generated fixtures**, not five people or independent-user validation. See [actual audit results](agent-audit.md). Run `node docs/usability/run-agent-audit.ts` from the repository root; generated exports go to ignored `.cache/agent-audit/`.
 
 | Audit | Scenario |
 | --- | --- |

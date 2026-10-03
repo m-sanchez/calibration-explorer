@@ -48,6 +48,8 @@ python -m unittest discover -s tests -p test_apply_temperature.py
 
 CI runs the application tests, production build, and replay checks on Node 24 and 26. Tests cover import validation, split isolation, numerical fixtures, tied thresholds, escaped exports, privacy defaults, deterministic examples, and fit-failure recovery.
 
+The [scenario audit](docs/usability/agent-audit.md) records five agent-led checks using generated inputs and a separate Python calculation of the digits results. It distinguishes module checks from browser observations and human usability research. Report confusing behaviour through the repository's usability feedback form using public or invented examples.
+
 ## Reference example
 
 The bundled [UCI handwritten-digits predictions](public/examples/optdigits.json) come from a multinomial logistic-regression baseline. The original training set supplies 2,675 model-fit, 574 calibration, and 574 policy-validation rows; all 1,797 original test rows are retained.
