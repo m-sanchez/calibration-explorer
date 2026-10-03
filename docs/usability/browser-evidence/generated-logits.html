@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Calibration assessment · Generated multiclass audit</title><style>
+  :root{color-scheme:light}*{box-sizing:border-box}body{max-width:1000px;margin:48px auto;padding:0 28px;color:#403424;background:#fdfcfa;font:15px/1.6 system-ui,sans-serif}h1,h2{font-family:Charter,"Bitstream Charter","Sitka Text",Cambria,Georgia,serif;font-weight:500}h1{font-size:40px;line-height:1.15}h2{font-size:25px;margin-top:38px}.eyebrow{font-size:14px;color:#5b4c37}.status{padding:12px 16px;background:#f4f2ec;border-left:3px solid #f0ad3d}table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}td,th{padding:9px;text-align:left;border-bottom:1px solid #ded9d1}th{font-weight:600}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f2ec;padding:18px;font-size:12px}svg{width:100%;height:auto;max-width:720px}.gridline{stroke:#e4dfd6;stroke-width:1}.tick,.axis-label{font-family:system-ui;fill:#6b5b42;font-size:12px}.ideal{stroke:#9c9487;stroke-dasharray:5 6}.ideal-label{fill:#6b5b42;font:11px system-ui}.before{fill:#5b4c37;stroke:#5b4c37}.after{fill:#9c4a2e;stroke:#9c4a2e}.gap-line{stroke-width:1;opacity:.35}.hit-area{fill:transparent;stroke:none}.risk-path{fill:none;stroke:#9c4a2e;stroke-width:2}.risk-active{fill:#9c4a2e;stroke:#fff;stroke-width:2}.key{display:flex;gap:20px;font-size:13px}.key span:first-child{color:#5b4c37}.key span:last-child{color:#9c4a2e}.foot{font-size:12px;color:#6b5b42;overflow-wrap:anywhere}li{margin:8px 0}@media print{body{margin:0;background:white}h2,table,svg{break-inside:avoid}pre{font-size:10px}}
+  </style></head><body><p class="eyebrow">Calibration Explorer · Assessment record</p><h1>Generated multiclass audit</h1><p class="status">Policy locked before test inspection in this session</p><p>150 observations in <strong>test</strong>. Generated 2026-10-03T14:00:10.701Z.</p>
+  <h2>Findings</h2><ul><li>Negative log-likelihood decreased from 1.0659 to 0.8038 on the selected split.</li><li>Accuracy was unchanged: 70.0% before, 70.0% after.</li><li>Measured ECE is 0.0049. This estimate depends on the sample and binning choices; it is not a deployment verdict.</li><li>Temperature was fitted on calibration observations only. Changes on other splits must be measured separately.</li></ul>
+  <table><thead><tr><th>Measurement</th><th>Original</th><th>After temperature scaling</th></tr></thead><tbody><tr><td>Accuracy</td><td>70.0%</td><td>70.0%</td></tr><tr><td>ECE</td><td>0.2362</td><td>0.0049</td></tr><tr><td>NLL (nats / observation)</td><td>1.0659</td><td>0.8038</td></tr></tbody></table>
+  <h2>Confidence and correctness</h2><p>15 equal-width bins. ECE is on a 0–1 scale; lower is not proof of calibration.</p><div class="key"><span>● Original</span><span>◆ After scaling</span></div><svg class="reliability" viewBox="0 0 610 384" role="group" aria-label="Reliability diagram showing mean confidence and observed accuracy on shared axes."><line x1="65" y1="324" x2="565" y2="324" class="gridline"/><text x="53" y="328" text-anchor="end" class="tick">0%</text><text x="65" y="349" text-anchor="middle" class="tick">0%</text><line x1="65" y1="264.4" x2="565" y2="264.4" class="gridline"/><text x="53" y="268.4" text-anchor="end" class="tick">20%</text><text x="165" y="349" text-anchor="middle" class="tick">20%</text><line x1="65" y1="204.79999999999998" x2="565" y2="204.79999999999998" class="gridline"/><text x="53" y="208.79999999999998" text-anchor="end" class="tick">40%</text><text x="265" y="349" text-anchor="middle" class="tick">40%</text><line x1="65" y1="145.2" x2="565" y2="145.2" class="gridline"/><text x="53" y="149.2" text-anchor="end" class="tick">60%</text><text x="365" y="349" text-anchor="middle" class="tick">60%</text><line x1="65" y1="85.6" x2="565" y2="85.6" class="gridline"/><text x="53" y="89.6" text-anchor="end" class="tick">80%</text><text x="465" y="349" text-anchor="middle" class="tick">80%</text><line x1="65" y1="26" x2="565" y2="26" class="gridline"/><text x="53" y="30" text-anchor="end" class="tick">100%</text><text x="565" y="349" text-anchor="middle" class="tick">100%</text><line x1="65" y1="324" x2="565" y2="26" class="ideal"/><text x="365" y="132.2" class="ideal-label">Confidence = accuracy</text><g class="bin-point before " ><title>Original, bin 15: 150 predictions, confidence 93.6%, accuracy 70.0%, ECE contribution 0.2362</title><line x1="533.1197759382535" y1="45.000613540800956" x2="533.1197759382535" y2="115.40000000000002" class="gap-line"/><circle class="marker" cx="533.1197759382535" cy="115.40000000000002" r="5"/><circle cx="533.1197759382535" cy="115.40000000000002" r="15" class="hit-area"/></g><g class="bin-point after " ><title>After scaling, bin 11: 150 predictions, confidence 70.5%, accuracy 70.0%, ECE contribution 0.0049</title><line x1="417.4364988477462" y1="113.94784668674328" x2="417.4364988477462" y2="115.40000000000002" class="gap-line"/><path class="marker" d="M417.4364988477462 109.40000000000002l6 6l-6 6l-6 -6Z"/><circle cx="417.4364988477462" cy="115.40000000000002" r="15" class="hit-area"/></g><text x="315" y="378" text-anchor="middle" class="axis-label">Mean confidence</text><text transform="translate(16 178) rotate(-90)" text-anchor="middle" class="axis-label">Observed accuracy</text></svg>
+  <table><thead><tr><th>Bin / series</th><th>Count</th><th>Confidence</th><th>Accuracy</th><th>ECE contribution</th></tr></thead><tbody><tr><td>Original 1</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>Original 2</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>Original 3</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>Original 4</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>Original 5</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>Original 6</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>Original 7</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>Original 8</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>Original 9</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>Original 10</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>Original 11</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>Original 12</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>Original 13</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>Original 14</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>Original 15</td><td>150</td><td>93.6%</td><td>70.0%</td><td>0.2362</td></tr><tr><td>After 1</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>After 2</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>After 3</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>After 4</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>After 5</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>After 6</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>After 7</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>After 8</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>After 9</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>After 10</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>After 11</td><td>150</td><td>70.5%</td><td>70.0%</td><td>0.0049</td></tr><tr><td>After 12</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>After 13</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>After 14</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr><tr><td>After 15</td><td>0</td><td>No observations</td><td>Unavailable</td><td>0.0000</td></tr></tbody></table>
+  <h2>Acceptance at 80.0%</h2><p>0 accepted · 150 abstained · 0 accepted mistakes · Unavailable observed error among accepted predictions.</p><svg class="risk-chart" viewBox="0 0 610 245" role="img" aria-label="Observed error rate among accepted predictions versus coverage. Equal-confidence observations are accepted together."><line class="gridline" x1="58" y1="188" x2="550" y2="188"/><text x="47" y="192" text-anchor="end" class="tick">0%</text><text x="58" y="210" text-anchor="middle" class="tick">0%</text><line class="gridline" x1="58" y1="105" x2="550" y2="105"/><text x="47" y="109" text-anchor="end" class="tick">50%</text><text x="304" y="210" text-anchor="middle" class="tick">50%</text><line class="gridline" x1="58" y1="22" x2="550" y2="22"/><text x="47" y="26" text-anchor="end" class="tick">100%</text><text x="550" y="210" text-anchor="middle" class="tick">100%</text><path d="M550 138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2 H550V138.2" class="risk-path"/><text x="300" y="241" text-anchor="middle" class="axis-label">Coverage · share of predictions accepted</text><text transform="translate(15 107) rotate(-90)" text-anchor="middle" class="axis-label">Error rate</text></svg>
+  <h2>Configuration and provenance</h2><pre>{
+  &quot;data&quot;: {
+    &quot;name&quot;: &quot;Generated multiclass audit&quot;,
+    &quot;kind&quot;: &quot;logits&quot;,
+    &quot;sha256&quot;: &quot;47b893d3cc63804c49b63f4b46d57e2d9d132eda2228e4ea5357ed9581d8865c&quot;,
+    &quot;rowCount&quot;: 600,
+    &quot;splitCounts&quot;: {
+      &quot;calibration&quot;: 300,
+      &quot;policy_validation&quot;: 150,
+      &quot;test&quot;: 150
+    },
+    &quot;classes&quot;: [
+      &quot;class-0&quot;,
+      &quot;class-1&quot;,
+      &quot;class-2&quot;
+    ],
+    &quot;provenance&quot;: {
+      &quot;included&quot;: false,
+      &quot;note&quot;: &quot;User-supplied provenance is omitted by default. It remains in the matching source file.&quot;
+    }
+  },
+  &quot;configuration&quot;: {
+    &quot;split&quot;: &quot;test&quot;,
+    &quot;bins&quot;: 15,
+    &quot;strategy&quot;: &quot;equal-width&quot;,
+    &quot;temperature&quot;: 2.2022061673554587,
+    &quot;threshold&quot;: 0.8,
+    &quot;group&quot;: null
+  },
+  &quot;policy&quot;: {
+    &quot;testViewed&quot;: true,
+    &quot;changedAfterTest&quot;: false,
+    &quot;locked&quot;: {
+      &quot;temperature&quot;: 2.2022061673554587,
+      &quot;threshold&quot;: 0.8
+    }
+  },
+  &quot;fit&quot;: {
+    &quot;temperature&quot;: 2.2022061673554587,
+    &quot;nllBefore&quot;: 1.0658839037574293,
+    &quot;nllAfter&quot;: 0.8038277289942373,
+    &quot;improved&quot;: true,
+    &quot;atBound&quot;: null,
+    &quot;status&quot;: &quot;converged&quot;,
+    &quot;iterations&quot;: 26
+  },
+  &quot;fitAttempt&quot;: {
+    &quot;status&quot;: &quot;applied&quot;,
+    &quot;result&quot;: {
+      &quot;temperature&quot;: 2.2022061673554587,
+      &quot;nllBefore&quot;: 1.0658839037574293,
+      &quot;nllAfter&quot;: 0.8038277289942373,
+      &quot;improved&quot;: true,
+      &quot;atBound&quot;: null,
+      &quot;status&quot;: &quot;converged&quot;,
+      &quot;iterations&quot;: 26
+    },
+    &quot;calibrationRows&quot;: 300,
+    &quot;message&quot;: &quot;Temperature was fitted on calibration observations only. Changes on other splits must be measured separately.&quot;
+  },
+  &quot;learning&quot;: null,
+  &quot;evaluationFailure&quot;: null,
+  &quot;software&quot;: {
+    &quot;app&quot;: &quot;calibration-explorer/0.1.0&quot;,
+    &quot;numericalLibrary&quot;: &quot;@m-sanchez/calibrated/2.0.1&quot;,
+    &quot;upstreamCommit&quot;: &quot;6e74b92dfc5c545a1cd926f96bd5bc44ae6c887b&quot;,
+    &quot;appSourceSha256&quot;: &quot;eb4f228516d3b078794e6b75d0d0e7251b25d8d60c0fb2a5d35da88f59c97243&quot;,
+    &quot;numericalDistributionSha256&quot;: &quot;3331be184fa4cb43dd85f42d2dc67abffb03d47b1bbf574c466e80758d057dd2&quot;
+  }
+}</pre>
+  <h2>Limits of this assessment</h2><ul><li>This measures top-prediction confidence calibration, not all class probabilities or production safety.</li><li>Split separation is checked within this file and this session. Previous external use, entity overlap and statistical independence are not established.</li><li>ECE depends on binning and finite sample size. Better ECE does not guarantee a better acceptance policy or performance under distribution shift.</li><li>The acceptance rule is confidence &gt;= threshold. Tied confidences are accepted together; an empty accepted set has no estimated error rate.</li><li>Group results and threshold exploration are descriptive. No correction for repeated comparisons is applied.</li><li>The input fingerprint identifies exact file contents. Reproduction without observations requires the matching input file and the recorded software.</li><li>Aggregate results are not anonymisation: small bins and groups can disclose individual outcomes. Review this report before sharing.</li><li>Default risk-coverage exports use a fixed 0.01 threshold grid rather than every individual confidence value.</li></ul><p class="foot">Raw observations and row identifiers are omitted from this report. This HTML has no scripts, remote assets or telemetry.</p></body></html>

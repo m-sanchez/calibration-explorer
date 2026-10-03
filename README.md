@@ -4,7 +4,7 @@
 
 Check whether your classifier’s confidence matches how often it is correct. Import saved predictions with known outcomes, inspect calibration, and export a report.
 
-[Open the workbench](https://huggingface.co/spaces/m-sanchez/calibration-explorer) · [Source](https://github.com/m-sanchez/calibration-explorer) · [Numerical library](https://github.com/m-sanchez/calibrated)
+[Open the workbench](https://huggingface.co/spaces/m-sanchez/calibration-explorer) · [Website copy](https://miguelsanchez.co.uk/calibration-explorer/) · [Worked example](https://miguelsanchez.co.uk/writing/calibration-explorer-accuracy-and-confidence/) · [Numerical library](https://github.com/m-sanchez/calibrated)
 
 ## Workflow
 

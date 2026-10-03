@@ -21,7 +21,7 @@ tags:
 
 Check whether your classifier’s confidence matches how often it is correct. Import saved predictions with known outcomes, inspect calibration, and export an HTML report, experiment JSON, or prediction CSV.
 
-[Source and reproduction instructions](https://github.com/m-sanchez/calibration-explorer) · [Numerical library](https://github.com/m-sanchez/calibrated)
+[Website copy](https://miguelsanchez.co.uk/calibration-explorer/) · [Worked example](https://miguelsanchez.co.uk/writing/calibration-explorer-accuracy-and-confidence/) · [Source and reproduction instructions](https://github.com/m-sanchez/calibration-explorer) · [Numerical library](https://github.com/m-sanchez/calibrated)
 
 ## Inputs and workflow
 
