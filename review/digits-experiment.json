@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-03T08:44:05.819Z",
+  "generatedAt": "2026-10-03T08:47:53.018Z",
   "software": {
     "app": "calibration-explorer/0.1.0",
     "numericalLibrary": "@m-sanchez/calibrated/2.0.1",
@@ -10,9 +10,9 @@
     "referenceModelRevision": "sha256:fc400aabfabd726df19d674b31863db1ee588cc60850796689a48472d6e5b8bd",
     "node": "v24.9.0",
     "appSource": {
-      "gitHead": null,
-      "workingTreeStatus": "uncommitted local changes",
-      "sha256": "b7a820592a7f6d327eb9bb501fb4985ca7eab04734c4010a77e07a7b326409c1"
+      "gitHead": "30f68859efaf40c39fc976fb21c0cd75ac90b0d2",
+      "workingTreeStatus": "clean",
+      "sha256": "eb4f228516d3b078794e6b75d0d0e7251b25d8d60c0fb2a5d35da88f59c97243"
     },
     "numericalSource": {
       "repository": "https://github.com/m-sanchez/calibrated",
