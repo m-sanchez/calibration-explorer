@@ -1,0 +1,111 @@
+{
+  "generatedAt": "2026-10-03T13:52:06.524Z",
+  "kind": "agent-led module/CLI audit, not human usability evidence",
+  "appVersion": "0.1.0",
+  "numericalVersion": "2.0.1",
+  "numericalRevision": "6e74b92dfc5c545a1cd926f96bd5bc44ae6c887b",
+  "node": "v24.9.0",
+  "gitHead": "05fc84d86038907e07afc9f9b7fcbecd0a2bbb0e",
+  "sourceSha256": "d418bf04e72fe4f5a719cd7f4571801797aea84dcfdf56ea2a82e47932572c84",
+  "sourceDigestEntries": [
+    "src/",
+    "package.json",
+    "package-lock.json"
+  ],
+  "inputOrigin": "Generated fixtures only",
+  "artifacts": ".cache/agent-audit/",
+  "humanParticipants": 0,
+  "scenarios": [
+    {
+      "id": "A1",
+      "status": "passed",
+      "scenario": "Confidence CSV import and export",
+      "rows": 10,
+      "accuracy": 0.6,
+      "ece": 0.30000000000000016,
+      "nll": null,
+      "fittingRejected": true,
+      "elapsedMilliseconds": 42
+    },
+    {
+      "id": "A2",
+      "status": "passed",
+      "scenario": "Multiclass split fit and export",
+      "calibrationRows": 300,
+      "policyValidationRows": 150,
+      "testRows": 150,
+      "temperature": 2.2022061673554587,
+      "unchangedFitAfterHeldOutLabelsChange": true,
+      "unchangedAccuracy": 0.7,
+      "decision": {
+        "accepted": 0,
+        "abstained": 150,
+        "errors": 0,
+        "coverage": 0,
+        "risk": null
+      },
+      "elapsedMilliseconds": 37
+    },
+    {
+      "id": "A3",
+      "status": "passed",
+      "scenario": "Malformed import rejection",
+      "rejected": 7,
+      "errors": [
+        {
+          "case": "duplicate IDs",
+          "error": "CSV row 3: duplicate id \"x\"; it was already used at CSV row 2. IDs must be unique across splits."
+        },
+        {
+          "case": "confidence out of range",
+          "error": "CSV row 2: confidence must be between 0 and 1, inclusive."
+        },
+        {
+          "case": "incorrect correctness token",
+          "error": "CSV row 2: correct must be true, false, 1, or 0."
+        },
+        {
+          "case": "malformed JSON",
+          "error": "Invalid JSON: Expected property name or '}' in JSON at position 1 (line 1 column 2)"
+        },
+        {
+          "case": "label outside class range",
+          "error": "JSON row 1: label must be a zero-based integer from 0 to 1."
+        },
+        {
+          "case": "missing logit split",
+          "error": "JSON row 1: split must be one of calibration, policy_validation, test, exploration; logits require an explicit split."
+        },
+        {
+          "case": "mixed class dimensions",
+          "error": "JSON row 2: expected 2 logits, found 3; class dimensions must match across all rows."
+        }
+      ],
+      "elapsedMilliseconds": 1
+    },
+    {
+      "id": "A4",
+      "status": "passed",
+      "scenario": "Policy/test order",
+      "lockBeforeTest": "Policy locked before test inspection in this session",
+      "testBeforeLock": "Exploratory after test inspection",
+      "changedThenRelocked": "Exploratory after test inspection",
+      "elapsedMilliseconds": 2
+    },
+    {
+      "id": "A5",
+      "status": "passed",
+      "scenario": "Export content safety and raw-data choice",
+      "escapedHTML": true,
+      "defaultRawRowsOmitted": true,
+      "optedInRows": 2,
+      "csvFormulaPrefixed": true,
+      "elapsedMilliseconds": 23
+    }
+  ],
+  "limits": [
+    "No browser interaction, rendering, downloads, worker messaging, session storage or hosted networking checked",
+    "No real own-data imports or independent-user replication",
+    "Timing describes this local audit run only"
+  ]
+}

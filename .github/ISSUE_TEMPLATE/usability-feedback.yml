@@ -1,0 +1,53 @@
+name: Usability feedback
+description: Describe a task that was confusing, blocked, or difficult to verify.
+title: "[Usability] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue is public. Do not attach real predictions, exports, row IDs, labels, scores, proprietary class names, credentials, or personal information. Use the public digits example or a minimal invented example instead. A feedback issue does not establish that a usability study was completed.
+  - type: input
+    id: environment
+    attributes:
+      label: App version and environment
+      description: Include the app version, browser/OS, and Space URL or source commit. Unknown is acceptable.
+    validations:
+      required: true
+  - type: dropdown
+    id: input-type
+    attributes:
+      label: Input used
+      options:
+        - Public digits example
+        - Controlled synthetic example
+        - Own authorised confidence CSV
+        - Own authorised logits JSON
+        - No input or unknown
+    validations:
+      required: true
+  - type: textarea
+    id: task
+    attributes:
+      label: Intended task and expected result
+      description: What were you trying to accomplish? Describe the task without disclosing data.
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: What happened
+      description: Give the steps, selected split/tab, expected versus observed behaviour, and whether you stopped or needed help. For downloads, say whether a file actually appeared and opened.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction or interpretation uncertainty
+      description: Optional. State a command that failed, redacted error, unexplained metric, or uncertainty about what changed. Do not paste private paths, exported reports or data.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Public disclosure check
+      options:
+        - label: I checked that this issue and any attachments contain no private prediction data, identifying details, or credentials.
+          required: true
