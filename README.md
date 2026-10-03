@@ -1,5 +1,7 @@
 # Calibration Explorer
 
+[![Calibration Explorer](docs/assets/social-preview.svg)](https://huggingface.co/spaces/m-sanchez/calibration-explorer)
+
 Check whether your classifier’s confidence matches how often it is correct. Import saved predictions with known outcomes, inspect calibration, and export a report.
 
 [Open the workbench](https://huggingface.co/spaces/m-sanchez/calibration-explorer) · [Source](https://github.com/m-sanchez/calibration-explorer) · [Numerical library](https://github.com/m-sanchez/calibrated)
