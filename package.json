@@ -1,6 +1,6 @@
 {
   "name": "calibration-explorer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "private": true,
   "type": "module",
@@ -9,14 +9,18 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "test": "node --test tests/*.test.ts",
-    "build:space": "npm run build && node scripts/build-space.ts"
+    "build:space": "npm run build && node scripts/build-space.ts",
+    "mcp": "node mcp/cli.ts"
   },
   "dependencies": {
-    "@m-sanchez/calibrated": "git+https://github.com/m-sanchez/calibrated.git#6e74b92dfc5c545a1cd926f96bd5bc44ae6c887b"
+    "@m-sanchez/calibrated": "git+https://github.com/m-sanchez/calibrated.git#6e74b92dfc5c545a1cd926f96bd5bc44ae6c887b",
+    "@modelcontextprotocol/server": "2.3.0",
+    "zod": "4.6.5"
   },
   "devDependencies": {
-    "vite": "8.3.2",
+    "@modelcontextprotocol/client": "2.3.0",
+    "@types/node": "26.6.4",
     "typescript": "7.0.2",
-    "@types/node": "26.6.4"
+    "vite": "8.3.2"
   }
 }
