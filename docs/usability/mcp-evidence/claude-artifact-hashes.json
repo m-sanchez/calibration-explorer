@@ -1,0 +1,22 @@
+[
+  {
+    "file": "claude-before-test.html",
+    "bytes": 25870,
+    "sha256": "d42ef048cd85973ec58810e9cbf78f185d5682e70a07ef1a63c94715ac2a2737"
+  },
+  {
+    "file": "claude-before-test.json",
+    "bytes": 28583,
+    "sha256": "41c225e063128ac99ae31f18c6e7c1a9e213e264a4ba5390c13003c3cbde9360"
+  },
+  {
+    "file": "claude-locked-test.html",
+    "bytes": 26643,
+    "sha256": "7ff4557d4cd15082b38a3d4af66f5a8ffa34a1b4366b1bc46a2146c1fec9842b"
+  },
+  {
+    "file": "claude-locked-test.json",
+    "bytes": 29228,
+    "sha256": "8adaac09645c9c5f18aae1d81f60bfa70b3bb2fcb65371283ab1f78824d32d13"
+  }
+]

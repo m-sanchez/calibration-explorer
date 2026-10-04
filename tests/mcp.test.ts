@@ -30,7 +30,7 @@ async function host(root: string, supportsElicitation = true) {
 test("real stdio client completes local confidence/logit workflows and preserves disclosure boundaries", { timeout: 60000 }, async () => {
   const root = await mkdtemp(join(tmpdir(), "calibration-mcp-"));
   const confidence = join(root, "confidence.csv");
-  await writeFile(confidence, "id,confidence,correct,split\nprivate-a,.9,1,exploration\nprivate-b,.9,0,exploration");
+  await writeFile(confidence, "id,confidence,correct,split\nprivate-a,.9,1,exploration\nprivate-b,.9,0,exploration\nprivate-hidden,.4,0,test");
   const testOnly = join(root, "test-only.json");
   await writeFile(testOnly, '[{"id":"private-test","split":"test","logits":[0,1],"label":1}]');
   const hostClient = await host(root);
@@ -70,6 +70,7 @@ test("real stdio client completes local confidence/logit workflows and preserves
     assert.equal(confidenceRecord.observations, undefined);
     assert.equal(confidenceRecord.data.provenance.included, false);
     assert.equal(confidenceRecord.before.accuracy, .5);
+    assert.equal(confidenceRecord.policy.testViewed, false);
     await call("create_report", { run: run.run, revision: confidenceSaved.revision, directory: root, name: "confidence" }, true);
 
     let untouched = await call("load_predictions", { path: testOnly });
@@ -85,6 +86,20 @@ test("real stdio client completes local confidence/logit workflows and preserves
     assert.equal(untouched.policy.changedAfterTest, true);
     const reopened = await call("load_predictions", { path: testOnly });
     assert.equal(reopened.policy.changedAfterTest, true);
+    const testCsv = join(root, "test-only.csv");
+    await writeFile(testCsv, "id,confidence,correct,split\nhidden,.7,1,test");
+    const csvOnly = await call("load_predictions", { path: testCsv });
+    assert.equal(csvOnly.policy.testViewed, false);
+    await call("create_report", { run: csvOnly.run, revision: csvOnly.revision, directory: root, name: "unopened-test" }, true);
+    const emptyPolicy = join(root, "empty-policy.csv");
+    await writeFile(emptyPolicy, "id,confidence,correct,split\npolicy-1,.2,0,policy_validation\npolicy-2,.3,1,policy_validation\ntest-1,.5,1,test");
+    let empty = await call("load_predictions", { path: emptyPolicy });
+    empty = await call("set_policy", { run: empty.run, revision: empty.revision, threshold: 1, lock: true });
+    assert.equal(empty.decision.accepted, 0);
+    assert.equal(empty.decision.risk, null);
+    const emptySaved = await call("create_report", { run: empty.run, revision: empty.revision, directory: root, name: "empty-policy" });
+    assert.equal(JSON.parse(await readFile(emptySaved.artifacts[1].path, "utf8")).decision.risk, null);
+    assert.equal(emptySaved.policy.testViewed, false);
 
     let digits = await call("load_predictions", { reference: true });
     const original = parseDataset(await readFile("public/examples/optdigits.json", "utf8"), "optdigits.json");

@@ -83,4 +83,6 @@ node --test tests/mcp.test.ts tests/exposure-matrix.test.ts tests/workflow.test.
 
 The stdio check starts a real SDK client and server subprocess, tests accepted and declined disclosure responses, verifies confidence/logit workflows and file contents, and writes `.cache/mcp-verification.json`. Those answers are scripted protocol checks, not human usability evidence. [The exposure matrix](exposure-matrix.md) identifies the shared-controller checks and actual tool/resource checks separately. Independent human participants remain zero.
 
+The [actual-client integration record](usability/mcp-audit.md) separately documents an agent-operated Claude Code 2.1.283 terminal session, its rendered disclosure controls, and saved reports.
+
 Official references: [SDK v2](https://github.com/modelcontextprotocol/typescript-sdk), [input-required elicitation and legacy compatibility](https://ts.sdk.modelcontextprotocol.io/v2/servers/input-required.html), [Claude Code elicitation and per-tool user interaction](https://code.claude.com/docs/en/mcp#respond-to-mcp-elicitation-requests).
