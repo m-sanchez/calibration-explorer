@@ -19,7 +19,7 @@ tags:
 
 # Calibration Explorer
 
-Check whether your classifier’s confidence matches how often it is correct. Import saved predictions with known outcomes, inspect calibration, and export an HTML report, experiment JSON, or prediction CSV.
+Check whether your classifier’s confidence matches how often it is correct. Import saved predictions with known outcomes, inspect calibration, and preview or export an HTML report, assessment JSON, or prediction CSV.
 
 [Website copy](https://miguelsanchez.co.uk/calibration-explorer/) · [Worked example](https://miguelsanchez.co.uk/writing/calibration-explorer-accuracy-and-confidence/) · [Source and reproduction instructions](https://github.com/m-sanchez/calibration-explorer) · [Numerical library](https://github.com/m-sanchez/calibrated)
 
@@ -30,6 +30,10 @@ Check whether your classifier’s confidence matches how often it is correct. Im
 - **Inspect** confidence and accuracy, **Calibrate** temperature on calibration logits, **Decide** an acceptance threshold on separate policy-validation rows, then lock it before test inspection and **Export** the assessment.
 
 The app evaluates saved predictions without training or running a classifier. Confidence-only files do not support temperature fitting or NLL. Four controlled examples illustrate sampling variation, binning, temperature scaling, and different group distortions.
+
+Test-only files require an explicit inspection choice before showing outcomes. Report previews and downloads share the same snapshot. The [Python preparation recipes](https://github.com/m-sanchez/calibration-explorer/blob/main/docs/prediction-recipes.md) write the supported input formats from your existing predictions.
+
+For a workflow inside your project, use the separate [local MCP server](https://github.com/m-sanchez/calibration-explorer/blob/main/docs/mcp.md). It reads selected local files and writes reports directly. Claude Code interactive terminal 2.1.283 is the verified client; the static Space does not connect to your filesystem. Returned MCP summaries can reach the client's model provider.
 
 ## Reference and limits
 
@@ -43,7 +47,7 @@ Input caps are 5 MiB, 20,000 rows, 100 classes, and 1,000,000 logits. They are n
 
 Imported predictions stay in the browser. The application has no analytics or remote inference calls; opening this hosted page still creates ordinary hosting requests. Raw inputs are not placed in configuration links or browser storage. Session storage retains test-inspection markers.
 
-Default reports omit observation rows, row IDs, and arbitrary imported provenance. Raw inclusion is explicit and includes all splits. Prediction CSV contains selected row-level results. Aggregates and small groups are not anonymisation.
+Default reports omit observation rows, row IDs, and arbitrary imported provenance. Reproducing a default assessment JSON requires its matching input. Raw inclusion is explicit and includes all splits. Prediction CSV contains selected row-level results. Aggregates and small groups are not anonymisation.
 
 ## Source and attribution
 

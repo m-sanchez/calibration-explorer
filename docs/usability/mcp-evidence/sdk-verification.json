@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-10-04T08:25:03.330Z",
+  "transport": "stdio",
+  "client": "official TypeScript SDK 2.3.0",
+  "humanParticipants": 0,
+  "confirmation": "Automated client handlers exercised accept and decline; no human host UI was tested.",
+  "status": "passed",
+  "testRows": 1797,
+  "temperature": 0.7259783904070843,
+  "before": {
+    "nll": 0.17595188348336863,
+    "ece": 0.03654894805641917,
+    "accuracy": 0.9488035614913745
+  },
+  "after": {
+    "nll": 0.15752642621016594,
+    "ece": 0.01007905702195184,
+    "accuracy": 0.9488035614913745
+  },
+  "confirmationRequests": 7,
+  "artifactHashes": [
+    {
+      "name": "assessment.html",
+      "sha256": "8362e96387a6f711d8a18e8310e2f5d9b0e886ade7a088a39079f2fe47483e93"
+    },
+    {
+      "name": "assessment.json",
+      "sha256": "26d628813bcd4f2fc4d6e80c49330dcf76e2e777eb20b552308350721598e932"
+    },
+    {
+      "name": "predictions.csv",
+      "sha256": "9d369e2636da4560b107380f5970d2957160ba048e7ab85cc749936c9e89648a"
+    }
+  ],
+  "artifactHashesNote": "Hashes identify temporary SDK-generated report files; the committed Claude client artifacts are a separate run."
+}

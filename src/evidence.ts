@@ -20,6 +20,7 @@ export interface Assessment {
     upstreamCommit: string;
     appSourceSha256: string | null;
     numericalDistributionSha256: string | null;
+    interface?: string;
   };
   data: {
     name: string;
@@ -62,19 +63,17 @@ export function interpretation(
   if (after && before.nll !== null && after.nll !== null) {
     const difference = after.nll - before.nll;
     lines.push(
-      `Negative log-likelihood ${Math.abs(difference) < 1e-10 ? "was unchanged" : difference < 0 ? "decreased" : "increased"} from ${decimal(before.nll)} to ${decimal(after.nll)} on the selected split.`,
+      `Accuracy ${before.accuracy === after.accuracy ? "stayed unchanged" : "changed"} (${percent(before.accuracy)} to ${percent(after.accuracy)}); NLL ${Math.abs(difference) < 1e-10 ? "was unchanged" : difference < 0 ? "decreased" : "increased"} from ${decimal(before.nll)} to ${decimal(after.nll)} on these observations.`,
     );
     lines.push(
-      `Accuracy ${before.accuracy === after.accuracy ? "was unchanged" : "changed"}: ${percent(before.accuracy)} before, ${percent(after.accuracy)} after.`,
+      `ECE ${before.ece === null || after.ece === null ? "is unavailable" : Math.abs(after.ece - before.ece) < 1e-10 ? "was unchanged" : after.ece < before.ece ? "decreased" : "increased"} from ${decimal(before.ece)} to ${decimal(after.ece)} with the selected binning; this is not a deployment verdict.`,
     );
   } else {
     lines.push(
       `On ${before.n.toLocaleString("en-US")} observations, mean confidence is ${percent(before.meanConfidence)} and observed accuracy is ${percent(before.accuracy)}.`,
     );
   }
-  lines.push(
-    `Measured ECE is ${decimal((after ?? before).ece)}. This estimate depends on the sample and binning choices; it is not a deployment verdict.`,
-  );
+  if (!after) lines.push(`Measured ECE is ${decimal(before.ece)} with the selected binning; this is not a deployment verdict.`);
   return lines;
 }
 
@@ -108,6 +107,8 @@ export function createAssessment(input: {
   evaluationFailure?: string | null;
   includeRows: boolean;
   trustedReference?: boolean;
+  software?: Assessment["software"];
+  historyScope?: string;
 }): Assessment {
   const { predictions: beforeRows, ...before } = input.before;
   const after = input.after
@@ -128,6 +129,7 @@ export function createAssessment(input: {
     "Aggregate results are not anonymisation: small bins and groups can disclose individual outcomes. Review this report before sharing.",
     "Default risk-coverage exports use a fixed 0.01 threshold grid rather than every individual confidence value.",
   ];
+  if (input.historyScope) limitations.push(input.historyScope);
   if (input.before.n < 100)
     limitations.push(
       "Fewer than 100 observations support this selection. Inspect counts before interpreting rates.",
@@ -194,7 +196,7 @@ export function createAssessment(input: {
   return {
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
-    software: {
+    software: input.software ?? {
       app: `calibration-explorer/${appVersion}`,
       numericalLibrary: `@m-sanchez/calibrated/${numericalVersion}`,
       upstreamCommit: numericalRevision,

@@ -24,6 +24,17 @@ row-1,0.8,true,exploration</code></pre>
       </div>
       </div>
     </details>
+    <details class="guide-section" id="guide-python-recipes">
+      <summary>Prepare predictions with Python</summary>
+      <p>Copy an existing experiment's arrays into one of these standard-library recipes. They write files locally for this browser or the local MCP server. The included examples are synthetic format demonstrations, not adequate evaluation data.</p>
+      <div class="guide-grid"><div><h3>Confidence and known outcomes</h3><p>Supply the predicted class and observed class explicitly. The recipe compares them to write correctness.</p><pre class="input-example"><code>from export_confidence import export_confidence
+export_confidence("predictions.csv", ids,
+    confidence, predicted, observed, splits)</code></pre><button class="text-button" data-recipe="export_confidence.py">Copy confidence recipe</button><a href="${prefix}recipes/export_confidence.py" download>Save Python file</a></div>
+      <div><h3>Raw class logits</h3><p>Supply raw scores in the model's exact class order, zero-based true labels, stable IDs, and explicit split assignments. Probabilities are not raw logits.</p><pre class="input-example"><code>from export_logits import export_logits
+export_logits("predictions.json", ids,
+    logits, label_indices, splits, classes)</code></pre><button class="text-button" data-recipe="export_logits.py">Copy logits recipe</button><a href="${prefix}recipes/export_logits.py" download>Save Python file</a></div></div>
+      <p>Keep related observations together when preparing splits. Split names cannot establish independence or undo prior test use. Confidence examples contain 3 exploration rows; logit examples contain 2 calibration, 2 policy-validation, and 2 test rows.</p>
+    </details>
     <details class="guide-section" id="guide-workflow">
       <summary>Fit, choose, lock, evaluate</summary>
       <ol class="guide-steps">

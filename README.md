@@ -6,6 +6,8 @@ Check whether your classifier’s confidence matches how often it is correct. Im
 
 [Open the workbench](https://huggingface.co/spaces/m-sanchez/calibration-explorer) · [Website copy](https://miguelsanchez.co.uk/calibration-explorer/) · [Worked example](https://miguelsanchez.co.uk/writing/calibration-explorer-accuracy-and-confidence/) · [Numerical library](https://github.com/m-sanchez/calibrated)
 
+Use the same assessment workflow from an assistant through the [local MCP server](docs/mcp.md). It reads selected local files and saves reports directly into your project. The first client target is Claude Code interactive terminal 2.1.283. Raw inputs stay local by default; returned summaries can reach the client's model provider.
+
 ## Workflow
 
 - **Inspect:** compare confidence and accuracy with reliability bins, ECE, and sample counts. Four controlled examples illustrate sampling variation, binning, temperature scaling, and different group distortions.
@@ -23,6 +25,8 @@ The app evaluates saved predictions; it does not train or run a classifier. It r
 | Logit JSON | `id`, finite `logits`, zero-based true `label`, `split` | `group` |
 
 IDs must be unique across splits. Logit vectors must use a consistent class order and dimension. JSON accepts an array of rows or the versioned dataset object shown in the [template](public/templates/logits.json). Missing CSV splits become `exploration`; the other partitions are `calibration`, `policy_validation`, and `test`. See the [CSV template](public/templates/confidence.csv).
+
+The [Python preparation recipes](docs/prediction-recipes.md) write both formats from explicit experiment arrays. Test-only files stay unopened until an explicit review choice. Browser report previews and downloads share one snapshot. Default JSON records require the matching input for reproduction; raw observations remain an explicit option. See the [browser/MCP exposure matrix](docs/exposure-matrix.md).
 
 Limits are 5 MiB, 20,000 rows, 100 classes, and 1,000,000 logits. These are input caps, not performance guarantees.
 

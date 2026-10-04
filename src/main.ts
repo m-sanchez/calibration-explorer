@@ -41,14 +41,10 @@ import {
   predictionCsv,
   interpretation,
 } from "./evidence.ts";
-import {
-  newPolicy,
-  changePolicy,
-  lockPolicy,
-  inspectTest,
-  assessmentStatus,
-  type PolicyState,
-} from "./policy.ts";
+import { newPolicy } from "./policy.ts";
+import { AssessmentWorkflow } from "./workflow.ts";
+import { nextAction } from "./guidance.ts";
+import { exportSnapshot } from "./export-snapshot.ts";
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
 let dataset: Dataset | null = null,
@@ -69,8 +65,9 @@ let referenceWorker: Worker | null = null,
   referenceBusy = false,
   referenceError = "",
   evaluationFailure: string | null = null;
-let policy: PolicyState = newPolicy(),
-  before: Analysis | null = null,
+let workflow: AssessmentWorkflow | null = null;
+const policy = () => workflow?.state ?? newPolicy();
+let before: Analysis | null = null,
   after: Analysis | null = null,
   curve: RiskPoint[] = [];
 let selected = -1,
@@ -90,6 +87,8 @@ let pending: {
     filename: string;
   } | null = null,
   importOpen = false;
+let preview: (ReturnType<typeof exportSnapshot> & { key: string }) | null = null;
+let showPreview = false;
 const splitNames: Record<Split, string> = {
   calibration: "Calibration",
   policy_validation: "Policy validation",
@@ -107,13 +106,7 @@ const panelAttributes = (view: WorkspaceView) =>
 
 function setWorkspaceView(view: WorkspaceView, focus = true): void {
   workspaceView = view;
-  for (const name of workspaceViews) {
-    const tab = document.getElementById(`tab-${name}`);
-    tab?.setAttribute("aria-selected", String(name === view));
-    tab?.setAttribute("tabindex", name === view ? "0" : "-1");
-    const panel = document.getElementById(`panel-${name}`);
-    if (panel) panel.hidden = name !== view;
-  }
+  render();
   if (focus) document.getElementById(`tab-${view}`)?.focus({ preventScroll: true });
 }
 
@@ -122,13 +115,7 @@ const effectiveTemperature = () => (after ? temperature() : 1);
 const count = (s: Split) =>
   dataset?.rows.filter((row) => row.split === s).length ?? 0;
 const current = () => after ?? before;
-const status = () =>
-  assessmentStatus(
-    policy,
-    split,
-    count("policy_validation") > 0,
-    group || undefined,
-  );
+const status = () => workflow?.status(split, group || undefined) ?? "Exploratory analysis";
 const inspectedKey = (value: string) =>
   `calibration-explorer:test-inspected:${value}`;
 const learningFamily = () =>
@@ -143,11 +130,9 @@ function loadSessionInspection(value: string): boolean {
     return false;
   }
 }
-function rememberInspection(): void {
+function rememberInspection(value: string): void {
   try {
-    sessionStorage.setItem(inspectedKey(hash), "yes");
-    const family = learningFamily();
-    if (family) sessionStorage.setItem(inspectedKey(family), "yes");
+    sessionStorage.setItem(inspectedKey(value), "yes");
   } catch {}
 }
 
@@ -173,6 +158,8 @@ async function activate(
   worker?.terminate();
   sequence++;
   dataset = next;
+  preview = null;
+  showPreview = false;
   workspaceView = "inspect";
   hash = nextHash;
   reference = isReference;
@@ -186,27 +173,17 @@ async function activate(
   group = "";
   selected = -1;
   const family = learningFamily();
-  policy = newPolicy(
-    loadSessionInspection(hash) ||
-      (family !== null && loadSessionInspection(family)),
-  );
+  workflow = new AssessmentWorkflow(next, [hash, ...(family ? [family] : [])], {
+    has: loadSessionInspection,
+    mark: rememberInspection,
+  });
   threshold = 0.8;
   error = "";
   pending = null;
   importOpen = false;
   (document.activeElement as HTMLElement)?.blur();
   pendingFocus = "assessment-title";
-  split = count("policy_validation")
-    ? "policy_validation"
-    : count("calibration")
-      ? "calibration"
-      : count("exploration")
-        ? "exploration"
-        : "test";
-  if (split === "test") {
-    policy = inspectTest(policy);
-    rememberInspection();
-  }
+  split = workflow.initialSplit() ?? "test";
   calculate();
 }
 
@@ -263,10 +240,16 @@ async function loadReference(): Promise<void> {
 
 function calculate(type: "analyze" | "fit" = "analyze"): void {
   if (!dataset) return;
+  if (split === "test" && !policy().testViewed) {
+    busy = "";
+    render();
+    return;
+  }
+  workflow?.requireInspection(split);
   if (type === "fit") {
     fit = null;
     fitAttempt = null;
-    policy = changePolicy(policy);
+    workflow?.change();
   }
   worker?.terminate();
   referenceWorker?.terminate();
@@ -313,7 +296,7 @@ function calculate(type: "analyze" | "fit" = "analyze"): void {
     after = event.data.after;
     curve = event.data.curve;
     evaluationFailure = event.data.evaluationFailure;
-    if (evaluationFailure) policy = changePolicy(policy);
+    if (evaluationFailure) workflow?.change();
     const selectedBins =
       (selectedSeries === "after" ? after : before)?.bins ?? [];
     if (selected < 0 || !selectedBins[selected]?.count) {
@@ -452,23 +435,26 @@ function binTable(): string {
 function workspace(): string {
   if (!dataset)
     return `<section id="workspace" class="empty"><h2>Load predictions for analysis</h2><p>Open a confidence CSV or logit JSON file to begin, or load the reproducible UCI reference.</p><button class="primary" data-action="import">Import predictions</button></section>`;
+  if (split === "test" && !policy().testViewed)
+    return `<section id="workspace" class="empty"><h2 id="assessment-title" tabindex="-1">Test results are unopened</h2><p>This file contains ${count("test").toLocaleString()} test observations and no other split. Reviewing them without a prior locked policy makes this assessment exploratory.</p><button class="primary" data-action="review-test">Inspect test results</button><button class="text-button" data-action="import">Choose another file</button></section>`;
   const active = current();
   const risk = active ? getRisk(active.predictions, threshold) : null;
   const groups = [
     ...new Set(dataset.rows.flatMap((row) => (row.group ? [row.group] : []))),
   ].sort();
   const names = Object.keys(splitNames) as Split[];
+  const next = nextAction({ kind: dataset.kind, counts: workflow!.counts, split, policy: policy(), fit: fitAttempt, group, view: workspaceView, evaluationFailure });
   return `<section id="workspace" aria-label="Prediction assessment"><div class="dataset-bar"><div><p class="eyebrow">${reference ? "UCI digits reference" : learning ? "Synthetic example" : "Your predictions"}</p><h2 id="assessment-title" tabindex="-1">${h(dataset.name)}</h2><p>${dataset.rows.length.toLocaleString()} observations · ${dataset.kind === "logits" ? `${dataset.classes?.length ?? dataset.rows[0]?.logits?.length} classes · logits` : "confidence and correctness"} </p></div><button class="secondary" data-action="import">Change input file</button></div>
-    <div class="workflow-tabs" role="tablist" aria-label="Analysis workflow">${workspaceViews.map((view) => `<button id="tab-${view}" role="tab" data-workspace-tab="${view}" aria-controls="panel-${view}" aria-selected="${workspaceView === view}" tabindex="${workspaceView === view ? "0" : "-1"}">${viewNames[view]}</button>`).join("")}</div><div class="split-bar"><div class="split-tabs" role="group" aria-label="Observation split">${names
+    <p class="control-label">Workflow stage</p><div class="workflow-tabs" role="tablist" aria-label="Analysis workflow">${workspaceViews.map((view) => `<button id="tab-${view}" role="tab" data-workspace-tab="${view}" aria-controls="panel-${view}" aria-selected="${workspaceView === view}" tabindex="${workspaceView === view ? "0" : "-1"}">${viewNames[view]}</button>`).join("")}</div><div class="next-action"><span>${h(next.text)}</span><button class="text-button" data-action="next-${h(next.action)}" ${busy ? "disabled" : ""}>${h(next.label)}</button></div><p class="control-label">Observation split</p><div class="split-bar"><div class="split-tabs" role="group" aria-label="Observation split">${names
       .filter((s) => count(s) > 0)
       .map(
         (s) =>
-          `<button data-split="${s}" aria-pressed="${split === s}" ${busy ? "disabled" : ""}>${splitNames[s]} <span>${count(s).toLocaleString()}</span>${s === "test" && !policy.testViewed ? ' <span aria-label="Results not yet inspected">◇</span>' : ""}</button>`,
+          `<button data-split="${s}" aria-pressed="${split === s}" ${busy ? "disabled" : ""}>${splitNames[s]} <span>${count(s).toLocaleString()}</span>${s === "test" && !policy().testViewed ? ' <span aria-label="Results not yet inspected">◇</span>' : ""}</button>`,
       )
       .join(
         "",
-      )}</div>${groups.length ? `<label>Slice<select id="group" ${busy ? "disabled" : ""}><option value="">All observations</option>${groups.map((g) => `<option value="${h(g)}" ${group === g ? "selected" : ""}>${h(g)}</option>`).join("")}</select></label>` : ""}<span class="status-chip ${policy.changedAfterTest ? "caution" : ""}">${h(status())}</span></div><details class="inline-help split-help" id="split-help"><summary>About this split</summary><p>${h(splitDescription(split))}</p></details>
-    <div class="workflow-panel" ${panelAttributes("inspect")}>${learning ? `<details class="example-settings" id="example-settings"><summary>Example settings</summary><div id="learning-panel">${learningPanel(learning, conditional, referenceError, referenceBusy)}</div></details>` : ""}<div class="assessment-grid"><div class="measurement-panel"><div class="section-heading"><div><h2>Reliability diagram</h2></div><span class="eyebrow">${splitNames[split]} · ${active?.n ?? "…"} rows</span></div>${metrics()}
+      )}</div>${groups.length ? `<label>Slice<select id="group" ${busy ? "disabled" : ""}><option value="">All observations</option>${groups.map((g) => `<option value="${h(g)}" ${group === g ? "selected" : ""}>${h(g)}</option>`).join("")}</select></label>` : ""}<span class="status-chip ${policy().changedAfterTest ? "caution" : ""}">${h(status())}</span></div><details class="inline-help split-help" id="split-help"><summary>About this split</summary><p>${h(splitDescription(split))}</p></details>
+    <div class="workflow-panel" ${panelAttributes("inspect")}>${learning ? `<details class="example-settings" id="example-settings"><summary>Example settings</summary><div id="learning-panel">${learningPanel(learning, conditional, referenceError, referenceBusy)}</div></details>` : ""}<div class="assessment-grid"><div class="measurement-panel"><div class="section-heading"><div><h2>Reliability diagram</h2></div><span class="eyebrow">${splitNames[split]} · ${active?.n ?? "…"} rows</span></div>${before ? `<p class="result-summary" aria-live="polite">${interpretation(before, after).slice(0, 2).map(h).join(" ")}</p>` : ""}${metrics()}
       <div class="chart-settings"><label>Bins<select id="bins" ${busy ? "disabled" : ""}>${[1, 5, 10, 15, 30].map((n) => `<option value="${n}" ${bins === n ? "selected" : ""}>${n}</option>`).join("")}</select></label><label>Binning<select id="strategy" ${busy ? "disabled" : ""}><option value="equal-width" ${strategy === "equal-width" ? "selected" : ""}>Equal width</option><option value="equal-mass" ${strategy === "equal-mass" ? "selected" : ""}>Equal mass</option></select></label><span class="legend"><span class="before-key">● Original</span>${after ? '<span class="after-key">◆ After scaling</span>' : ""}</span></div>
       <div id="chart">${before ? reliabilitySvg(before.bins, after?.bins ?? null, selected, selectedSeries) : '<div class="skeleton">Preparing the reliability diagram…</div>'}</div><p class="chart-hint">Select a point to inspect its bin.</p><details class="inline-help" id="chart-guide"><summary>How to read this chart</summary><p>Each point groups predictions with similar confidence. The diagonal marks equal confidence and accuracy. Points below it have lower observed accuracy than confidence; points above it have higher observed accuracy.</p>${metricGuide()}</details>${binTable()}
     </div><aside class="bin-panel" id="bin-detail" aria-live="polite">${binDetail()}</aside></div>
@@ -480,9 +466,9 @@ function workspace(): string {
         : ""
     }<p class="muted">${active && active.n < 100 ? "Small sample: fewer than 100 observations. " : ""}A low ECE is not proof of calibration. The bins and sample size matter.</p></div></details></div>
     <div class="workflow-panel" ${panelAttributes("calibrate")}><section class="recalibration section-card" id="recalibrate"><div class="section-heading"><div><h2>Temperature scaling</h2></div><span class="tag">p = softmax(logits / T)</span></div><div class="recalibration-grid"><div><p>Fit one temperature using the <strong>calibration split only</strong>. Compare the original and scaled predictions on another split.</p><details class="inline-help" id="temperature-help"><summary>How temperature scaling works</summary><p class="muted">Scaling divides every class logit by T before softmax. T > 1 softens the probabilities; T < 1 sharpens them. The fit minimises calibration NLL. Predicted classes stay unchanged, and results on another split can improve or worsen. Group slices change the comparison, not the calibration rows used to fit.</p></details><button class="primary" data-action="fit" ${busy || dataset.kind !== "logits" || !count("calibration") ? "disabled" : ""}>${fit ? "Refit temperature" : "Fit on calibration data"}</button>${fit || fitAttempt ? `<button class="text-button" data-action="reset-fit">${fit ? "Use original probabilities" : "Dismiss fit result"}</button>` : ""}${dataset.kind !== "logits" ? '<p class="input-note">This file contains confidence values. Temperature scaling requires full logits and class labels.</p>' : !count("calibration") ? '<p class="input-note">Add a separate calibration split to enable fitting.</p>' : ""}</div><div class="fit-result" aria-live="polite">${fitSummary()}${evaluationFailure ? `<p class="warning" role="alert">${h(evaluationFailure)}</p>` : ""}</div></div>${comparison()}</section></div>
-    <div class="workflow-panel" ${panelAttributes("decide")}><section class="section-card" id="decisions"><div class="section-heading"><div><h2>Confidence threshold</h2></div><span class="tag">Confidence ≥ threshold</span></div><div class="decision-grid"><div><label class="threshold-label" for="threshold">Accept confidence at or above <output id="threshold-output">${percent(threshold, 0)}</output></label><input type="range" id="threshold" min="0" max="100" step="1" value="${Math.round(threshold * 100)}" ${busy ? "disabled" : ""}/><div class="risk-numbers" id="risk-numbers">${risk ? riskNumbers(risk) : ""}</div><details class="inline-help" id="threshold-help"><summary>Coverage and error rate explained</summary><p class="muted">Coverage is the fraction of observations accepted. Error rate is the fraction of accepted predictions that are wrong. Equal-confidence rows move together; an empty accepted set has no estimated error rate.</p></details>${count("test") ? `<div class="policy-lock"><button class="secondary" data-action="lock" ${busy || !before || !!evaluationFailure || split !== "policy_validation" || !!group ? "disabled" : ""}>${policy.locked ? "Update locked policy" : "Lock policy before test review"}</button><p>${policy.locked ? `Locked at ${percent(policy.locked.threshold, 0)}, T = ${decimal(policy.locked.temperature, 4)}.` : "Choose a threshold on policy validation, then lock it before opening test results."}</p>${policy.changedAfterTest ? '<p class="warning">Test results have already informed this session. Relocking does not restore an untouched-test claim.</p>' : ""}</div>` : ""}</div><div id="risk-chart">${risk ? riskSvg(curve, risk) : ""}</div></div></section></div>
-    <div class="workflow-panel" ${panelAttributes("export")}><section class="export-section" id="export"><div><h2>Export assessment</h2><p>${h(splitNames[split])} · ${active?.n.toLocaleString() ?? 0} observations${group ? ` · ${h(group)}` : ""}</p><label class="check"><input type="checkbox" id="include-rows" ${includeRows ? "checked" : ""}/> Include all splits and supplied provenance in exports</label><p class="muted small">Includes test results if enabled. CSV always contains rows from the selected split.</p><details class="inline-help" id="export-help"><summary>What each export includes</summary><p>HTML contains charts, measurements, settings and limitations. JSON records results, fit details and the input hash. Optional source data includes all splits and supplied provenance, and counts as test inspection.</p><p>Prediction CSV contains original and scaled confidence, correctness and row IDs for this selection. Formula-like IDs receive a leading apostrophe for spreadsheet safety.</p></details></div><div class="export-actions"><button class="primary" data-action="report" ${!before || busy ? "disabled" : ""}>Download HTML report</button><button class="secondary" data-action="record" ${!before || busy ? "disabled" : ""}>Experiment JSON</button><button class="secondary" data-action="predictions" ${!before || busy ? "disabled" : ""}>Prediction CSV</button><button class="text-button" data-action="share">Copy configuration link</button></div></section>
-    <details class="methods" id="methods"><summary>Methods, provenance, and limits</summary><div class="method-columns"><div><h3>What is measured</h3><p>ECE weights each bin’s absolute confidence–accuracy gap by its share of observations. Empty bins do not represent observed zero accuracy. NLL uses all class logits and the true label, in nats per observation.</p><p>Temperature is fitted on calibration rows only. Threshold exploration uses the selected split. Reports describe session behaviour, not whether you previously inspected these observations elsewhere.</p><p>Positive temperature preserves class ordering within a prediction. It can change confidence ranking across predictions, so acceptance outcomes must be measured directly.</p></div><div><h3>Local processing</h3><p>Files are read locally. This application sends no imported predictions to a server, uses no analytics, and keeps no raw files in browser storage. Opening this hosted page still creates ordinary hosting requests.</p><p>Input limits: 5 MiB, 20,000 rows, 100 classes, and 1,000,000 logit values. These are input limits, not a performance guarantee.</p><p>Only test-inspection markers are retained for this browser session: input fingerprints and the settings identifying reused synthetic outcomes. Config links contain no imported observations.</p></div></div><h3>Source record</h3><pre>SHA-256 ${h(hash)}
+    <div class="workflow-panel" ${panelAttributes("decide")}><section class="section-card" id="decisions"><div class="section-heading"><div><h2>Confidence threshold</h2></div><span class="tag">Confidence ≥ threshold</span></div><div class="decision-grid"><div><label class="threshold-label" for="threshold">Accept confidence at or above <output id="threshold-output">${percent(threshold, 0)}</output></label><input type="range" id="threshold" min="0" max="100" step="1" value="${Math.round(threshold * 100)}" ${busy ? "disabled" : ""}/><div class="risk-numbers" id="risk-numbers">${risk ? riskNumbers(risk) : ""}</div><details class="inline-help" id="threshold-help"><summary>Coverage and error rate explained</summary><p class="muted">Coverage is the fraction of observations accepted. Error rate is the fraction of accepted predictions that are wrong. Equal-confidence rows move together; an empty accepted set has no estimated error rate.</p></details>${count("test") ? `<div class="policy-lock"><button class="secondary" data-action="lock" ${busy || !before || !!evaluationFailure || split !== "policy_validation" || !!group ? "disabled" : ""}>${policy().locked ? "Update locked policy" : "Lock policy before test review"}</button><p>${policy().locked ? `Locked at ${percent(policy().locked!.threshold, 0)}, T = ${decimal(policy().locked!.temperature, 4)}.` : "Choose a threshold on policy validation, then lock it before opening test results."}</p>${policy().changedAfterTest ? '<p class="warning">Test results have already informed this session. Relocking does not restore an untouched-test claim.</p>' : ""}</div>` : ""}</div><div id="risk-chart">${risk ? riskSvg(curve, risk) : ""}</div></div></section></div>
+    <div class="workflow-panel" ${panelAttributes("export")}><section class="export-section" id="export"><div><h2>Export assessment</h2><p>${h(splitNames[split])} · ${active?.n.toLocaleString() ?? 0} observations${group ? ` · ${h(group)}` : ""}</p><label class="check"><input type="checkbox" id="include-rows" ${includeRows ? "checked" : ""}/> Include all splits and supplied provenance in exports</label><p class="muted small">Includes test results if enabled. CSV always contains rows from the selected split.</p><details class="inline-help" id="export-help"><summary>What each export includes</summary><p>HTML contains charts, measurements, settings and limitations. JSON records results, fit details and the input hash. Optional source data includes all splits and supplied provenance, and counts as test inspection.</p><p>Prediction CSV contains original and scaled confidence, correctness and row IDs for this selection. Formula-like IDs receive a leading apostrophe for spreadsheet safety.</p></details></div><div class="export-actions"><button class="secondary" data-action="preview-report" ${!before || busy ? "disabled" : ""}>Preview report</button><button class="primary" data-action="report" ${!before || busy ? "disabled" : ""}>Share a report<small>HTML download</small></button><button class="secondary" data-action="record" ${!before || busy ? "disabled" : ""}>Save assessment record<small>JSON · matching input required unless rows included</small></button><button class="secondary" data-action="predictions" ${!before || busy ? "disabled" : ""}>Inspect prediction rows<small>CSV · selected split and row IDs</small></button><button class="text-button" data-action="share">Copy configuration link</button></div></section>${showPreview && preview && preview.key === snapshotKey() ? `<section class="report-preview"><h3>Report preview</h3><p>${h(splitNames[split])} · ${preview.record.before.n.toLocaleString()} observations · T = ${decimal(preview.record.configuration.temperature, 4)} · ${h(preview.record.status)}</p><p class="small muted">${includeRows ? "The companion JSON includes every split and supplied provenance." : "Raw observations are excluded. Reproduction requires your matching input file."} This preview and the HTML download use the same snapshot.</p><iframe title="Assessment report preview" sandbox="" srcdoc="${h(preview.html)}"></iframe></section>` : ""}
+    <details class="methods" id="methods"><summary>Methods, provenance, and limits</summary><div class="method-columns"><div><h3>What is measured</h3><p><a href="https://github.com/m-sanchez/calibrated" target="_blank" rel="noopener noreferrer">Numerical library and implementation</a></p><p>ECE weights each bin’s absolute confidence–accuracy gap by its share of observations. Empty bins do not represent observed zero accuracy. NLL uses all class logits and the true label, in nats per observation.</p><p>Temperature is fitted on calibration rows only. Threshold exploration uses the selected split. Reports describe session behaviour, not whether you previously inspected these observations elsewhere.</p><p>Positive temperature preserves class ordering within a prediction. It can change confidence ranking across predictions, so acceptance outcomes must be measured directly.</p></div><div><h3>Local processing</h3><p>Files are read locally. This application sends no imported predictions to a server, uses no analytics, and keeps no raw files in browser storage. Opening this hosted page still creates ordinary hosting requests.</p><p>Input limits: 5 MiB, 20,000 rows, 100 classes, and 1,000,000 logit values. These are input limits, not a performance guarantee.</p><p>Only test-inspection markers are retained for this browser session: input fingerprints and the settings identifying reused synthetic outcomes. Config links contain no imported observations.</p></div></div><h3>Source record</h3><pre>SHA-256 ${h(hash)}
 ${h(JSON.stringify(dataset.provenance, null, 2))}</pre><p class="small">Numerics: @m-sanchez/calibrated ${numericalVersion}. <a href="https://github.com/m-sanchez/calibrated/tree/${numericalRevision}" target="_blank" rel="noopener noreferrer">Numerical source</a> · <a href="https://proceedings.mlr.press/v70/guo17a.html" target="_blank" rel="noopener noreferrer">Temperature scaling reference</a></p></details></div>
   </section>`;
 }
@@ -527,8 +513,8 @@ function render(): void {
     document.activeElement instanceof HTMLInputElement
       ? document.activeElement.selectionStart
       : null;
-  app.innerHTML = `<header class="topbar" ${importOpen ? "inert" : ""}><div class="topbar-inner"><a class="brand" href="https://miguelsanchez.co.uk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 12L18 6M6 12L18 18" stroke="var(--accent)" stroke-width="2.25" stroke-linecap="round"/><circle cx="6" cy="12" r="2.8" fill="var(--accent)"/><circle cx="18" cy="6" r="2.8" fill="var(--accent)"/><circle cx="18" cy="18" r="2.35" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.7"/></svg><span><span class="brand-first">Miguel</span> <strong>Sánchez</strong></span></a><nav aria-label="Page navigation"><a href="#workspace">Assessment</a><a href="#usage-guide" data-action="guide">How to use</a><a href="https://github.com/m-sanchez/calibrated" target="_blank" rel="noopener noreferrer">Numerical library</a></nav><span class="local-badge">Browser-based analysis</span></div></header>
-    <main ${importOpen ? "inert" : ""}><section class="intro compact-intro" aria-labelledby="app-title"><div><h1 id="app-title">Calibration Explorer</h1><p class="intro-description">Check whether your classifier’s confidence matches how often it is correct. Upload saved predictions with known outcomes to measure calibration and export a report.</p></div><div class="intro-actions"><button class="primary" data-action="import">Import predictions</button><button class="secondary" data-action="reference">Load digits example</button><span class="input-caption">CSV or JSON · Processed in your browser</span></div></section>
+  app.innerHTML = `<header class="topbar" ${importOpen ? "inert" : ""}><div class="topbar-inner"><a class="brand product-brand" href="#app-title">Calibration Explorer</a><span class="author-attribution">By <a href="https://miguelsanchez.co.uk" target="_blank" rel="noopener noreferrer">Miguel Sánchez</a></span><nav aria-label="Page navigation"><a href="#workspace">Assessment</a><a href="#usage-guide" data-action="guide">How to use</a><a href="#methods" data-action="methods">Methods &amp; source</a></nav><span class="local-badge">Browser-based analysis</span></div></header>
+    <main ${importOpen ? "inert" : ""}><section class="intro compact-intro" aria-labelledby="app-title"><div><h1 id="app-title">Calibration Explorer</h1><p class="intro-description">Check whether your classifier’s confidence matches how often it is correct. Upload saved predictions with known outcomes to measure calibration and export a report.</p></div><div class="intro-actions"><button class="primary" data-action="import">Import predictions</button><button class="secondary" data-action="reference">Explore a worked example</button><span class="example-caption">Handwritten-digit classifier · reproducible results</span><span class="input-caption">CSV or JSON · Processed in your browser</span></div></section>
     <div class="reference-tools">${workflowGuide(import.meta.env.BASE_URL)}<details class="learning-disclosure" id="learning-examples"><summary>Try a controlled example</summary>${learningChooser()}</details></div>${error && !importOpen ? `<div class="error" role="alert">${h(error)}</div>` : ""}${busy ? `<div class="busy" role="status"><span></span>${h(busy)}…</div>` : ""}${workspace()}
     <footer><p><a href="https://miguelsanchez.co.uk" target="_blank" rel="noopener noreferrer">Miguel Sánchez Durán</a></p><p><a href="${import.meta.env.BASE_URL}LICENSE.txt" target="_blank" rel="noopener noreferrer">MIT license</a><a href="https://github.com/m-sanchez/calibration-explorer" target="_blank" rel="noopener noreferrer">Source</a><span>Version ${appVersion}</span></p></footer></main>${modal()}${toast ? `<div class="toast" role="status">${h(toast)}</div>` : ""}`;
   bind();
@@ -634,6 +620,21 @@ function download(name: string, content: string, type: string): void {
   }, 60000);
 }
 
+function snapshotKey(): string {
+  return JSON.stringify([hash, sequence, split, group, bins, strategy, threshold, includeRows, policy()]);
+}
+
+function prepareSnapshot() {
+  if (preview?.key === snapshotKey()) return preview;
+  if (includeRows) {
+    if (!window.confirm("Include all supplied rows and provenance in the companion JSON, including test outcomes? This records test inspection in this session.")) return null;
+    workflow?.exposeSourceRows(true);
+    render();
+  }
+  preview = { ...exportSnapshot(exportRecord()), key: snapshotKey() };
+  return preview;
+}
+
 function exportRecord() {
   if (!dataset || !before)
     throw new Error("Complete an assessment before exporting.");
@@ -641,11 +642,7 @@ function exportRecord() {
     throw new Error(
       "Wait for the current assessment to finish before exporting.",
     );
-  if (includeRows && count("test")) {
-    policy = inspectTest(policy);
-    rememberInspection();
-    render();
-  }
+  workflow?.requireInspection(split);
   return createAssessment({
     dataset,
     hash,
@@ -657,7 +654,7 @@ function exportRecord() {
     temperature: effectiveTemperature(),
     threshold,
     group: group || undefined,
-    policy,
+    policy: policy(),
     status: status(),
     fit,
     fitAttempt,
@@ -685,6 +682,28 @@ function exportRecord() {
 }
 
 async function action(name: string): Promise<void> {
+  if (name.startsWith("next-")) {
+    const next = name.slice(5);
+    if (workspaceViews.includes(next as WorkspaceView)) { setWorkspaceView(next as WorkspaceView); return; }
+    if (next === "preview-report") { await action("preview-report"); return; }
+    if (next === "fit" || next === "lock") { await action(next); return; }
+    if (next === "clear-group") { group = ""; calculate(); return; }
+    if (next === "next-policy") { split = "policy_validation"; workspaceView = "decide"; calculate(); return; }
+    if (next === "next-test") { await action("review-test"); return; }
+  }
+  if (name === "methods") {
+    workspaceView = "export";
+    render();
+    const methods = document.querySelector<HTMLDetailsElement>("#methods");
+    if (methods) { methods.open = true; methods.querySelector("summary")?.focus(); }
+    return;
+  }
+  if (name === "review-test" && workflow) {
+    workflow.reviewTest();
+    split = "test";
+    calculate();
+    return;
+  }
   if (name === "guide") {
     const guide = document.querySelector<HTMLDetailsElement>("#usage-guide");
     if (guide) {
@@ -718,9 +737,9 @@ async function action(name: string): Promise<void> {
     calculate();
   }
   if (name === "learning-input" && learning && dataset) {
+    if (!window.confirm("Save all synthetic rows, including test outcomes? This records test inspection in this session.")) return;
     if (count("test")) {
-      policy = inspectTest(policy);
-      rememberInspection();
+      workflow?.reviewTest();
       render();
     }
     download(
@@ -763,7 +782,7 @@ async function action(name: string): Promise<void> {
   if (name === "reset-fit") {
     fit = null;
     fitAttempt = null;
-    policy = changePolicy(policy);
+    workflow?.change();
     calculate();
   }
   if (name === "lock") {
@@ -775,25 +794,20 @@ async function action(name: string): Promise<void> {
       evaluationFailure
     )
       return;
-    policy = lockPolicy(policy, effectiveTemperature(), threshold);
+    workflow?.lock(effectiveTemperature(), threshold, split, group || undefined, evaluationFailure);
     notify(
-      policy.changedAfterTest
+      policy().changedAfterTest
         ? "Policy recorded. Results remain exploratory after test inspection."
         : "Policy locked. Open the Test split to evaluate it.",
     );
   }
-  if (name === "report")
-    download(
-      "calibration-assessment.html",
-      reportHtml(exportRecord()),
-      "text/html",
-    );
-  if (name === "record")
-    download(
-      "calibration-assessment.json",
-      JSON.stringify(exportRecord(), null, 2),
-      "application/json",
-    );
+  if (["preview-report", "report", "record"].includes(name)) {
+    const snapshot = prepareSnapshot();
+    if (!snapshot) return;
+    if (name === "preview-report") { showPreview = true; render(); }
+    if (name === "report") download("calibration-assessment.html", snapshot.html, "text/html");
+    if (name === "record") download("calibration-assessment.json", snapshot.json, "application/json");
+  }
   if (name === "predictions" && dataset && before)
     download(
       "assessed-predictions.csv",
@@ -820,6 +834,15 @@ async function action(name: string): Promise<void> {
 }
 
 function bindActions(scope: ParentNode): void {
+  scope.querySelectorAll<HTMLElement>("[data-recipe]").forEach(el => el.addEventListener("click", () => {
+    const name = el.dataset.recipe;
+    if (name !== "export_confidence.py" && name !== "export_logits.py") return;
+    void fetch(`${import.meta.env.BASE_URL}recipes/${name}`).then(async response => {
+      if (!response.ok) throw new Error("Recipe is unavailable. Use its download link.");
+      await navigator.clipboard.writeText(await response.text());
+      notify("Python recipe copied. Replace the synthetic example with your experiment's explicit arrays.");
+    }).catch(() => notify("Clipboard access is unavailable. Use the recipe's download link."));
+  }));
   scope.querySelectorAll<HTMLElement>("[data-action]").forEach((el) =>
     el.addEventListener("click", (event) => {
       if (el.dataset.action === "guide") event.preventDefault();
@@ -902,7 +925,7 @@ function bind(): void {
   document.querySelectorAll<HTMLElement>("[data-split]").forEach((el) =>
     el.addEventListener("click", () => {
       const next = el.dataset.split as Split;
-      if (next === "test" && !policy.testViewed && !policy.locked) {
+      if (next === "test" && !policy().testViewed && !policy().locked) {
         if (
           !window.confirm(
             "Test results have not been inspected in this session. Opening them without a locked policy makes this assessment exploratory. Open test results?",
@@ -912,8 +935,7 @@ function bind(): void {
       }
       split = next;
       if (split === "test") {
-        policy = inspectTest(policy);
-        rememberInspection();
+        workflow?.reviewTest();
       }
       selected = -1;
       calculate();
@@ -944,7 +966,7 @@ function bind(): void {
     .querySelector<HTMLInputElement>("#threshold")
     ?.addEventListener("input", (event) => {
       threshold = Number((event.target as HTMLInputElement).value) / 100;
-      policy = changePolicy(policy);
+      workflow?.change();
       const risk = current()
         ? getRisk(current()!.predictions, threshold)
         : null;
@@ -964,6 +986,7 @@ function bind(): void {
     .querySelector<HTMLInputElement>("#include-rows")
     ?.addEventListener("change", (event) => {
       includeRows = (event.target as HTMLInputElement).checked;
+      render();
     });
   document
     .querySelector<HTMLInputElement>("#prediction-file")
