@@ -71,6 +71,8 @@ Raw files remain in the local process by default. Returned summaries, metadata, 
 
 The server enforces resolved input/output roots, existing input limits, 16 loaded runs per process, and new-folder-only report writes. Input limits remain 5 MiB, 20,000 rows, 100 classes and 1,000,000 logits. These are caps, not a performance guarantee. Inputs are immutable snapshots; editing a file on disk does not alter a loaded run.
 
+Import failures return a fixed diagnostic without source values. Use the browser's local import preview when you need detailed row-level validation.
+
 Inspection history is process-local. Stopping or restarting the server clears its loaded runs and history. Neither a lock nor a fresh server establishes that test data was unseen elsewhere or statistically independent. Reports state this scope. Changing a policy after test review remains exploratory even after relocking.
 
 MCP evidence records the server/core source hash and numerical distribution hash explicitly. The core hash covers sorted `src`, `mcp`, `package.json` and `package-lock.json` paths; hashes use relative paths with forward slashes, NUL, bytes, NUL. The numerical hash covers the installed library's `dist` tree with the same encoding as the browser build.

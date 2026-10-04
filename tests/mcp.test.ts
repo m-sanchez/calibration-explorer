@@ -169,3 +169,26 @@ test("real stdio client completes local confidence/logit workflows and preserves
     assert.ok(!metadata.includes('"accuracy"'));
   } finally { await unavailable.client.close(); }
 });
+
+test("MCP import errors never return source fragments from invalid files", async () => {
+  const root = await mkdtemp(join(tmpdir(), "calibration-mcp-invalid-"));
+  const { client } = await host(root);
+  const row = { id: 'private"SENSITIVE_ID', confidence: .7, correct: true, split: "test" };
+  const cases = [
+    JSON.stringify([row, row]),
+    JSON.stringify([{ ...row, 'private"SENSITIVE_KEY': 1 }]),
+    "SENSITIVE_SYNTAX is not JSON",
+  ];
+  try {
+    for (let index = 0; index < cases.length; index++) {
+      const path = join(root, `invalid-${index}.json`);
+      await writeFile(path, cases[index]);
+      const result = await client.callTool({ name: "load_predictions", arguments: { path } });
+      assert.equal(result.isError, true);
+      assert.equal(result.structuredContent, undefined);
+      assert.deepEqual(result.content, [{ type: "text", text: "Invalid prediction file. Check the documented CSV/JSON format and limits; use the browser's local import preview for detailed validation." }]);
+      assert.ok(!JSON.stringify(result).includes("SENSITIVE"));
+    }
+    assert.deepEqual((await client.listResources()).resources.map(resource => resource.uri), ["calibration://methods"]);
+  } finally { await client.close(); }
+});

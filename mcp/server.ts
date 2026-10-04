@@ -147,7 +147,7 @@ export async function createCalibrationServer(options: { inputRoots: string[]; o
     } finally { await file.close(); }
     let dataset: Dataset;
     try { dataset = parseDataset(new TextDecoder("utf-8", { fatal: true }).decode(bytes), basename(path)); }
-    catch (error) { throw new Error(`Invalid prediction file: ${String(error instanceof Error ? error.message : error).replace(/"[^"\n]*"/g, '"[value]"')}`); }
+    catch { throw new Error("Invalid prediction file. Check the documented CSV/JSON format and limits; use the browser's local import preview for detailed validation."); }
     const sha256 = digest(bytes);
     const run: Run = { id: randomUUID(), revision: 0, dataset, sha256, workflow: new AssessmentWorkflow(dataset, [sha256], history), fit: null,
       threshold: .8, split: null, bins: 15, strategy: "equal-width", assessment: null, reference: args.reference };
