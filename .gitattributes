@@ -1,4 +1,5 @@
 * text=auto eol=lf
 *.png binary
 *.woff2 binary
-docs/usability/release-0.2.0-evidence/*.csv -text
+docs/usability/release-0.2.0-evidence/* -text
+docs/assets/reference-workflow-0.2.0/* -text
