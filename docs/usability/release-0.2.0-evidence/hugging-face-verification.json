@@ -1,0 +1,146 @@
+{
+  "checkedAt": "2026-10-04T08:38:10.362060+00:00",
+  "url": "https://huggingface.co/spaces/m-sanchez/calibration-explorer/resolve/main/",
+  "expectedSpaceCommit": "6b7e39ed9b73e6d292e9df1510f96a04336ff0f7",
+  "applicationVersion": "0.2.0",
+  "applicationCommit": "b4d3107c008c9b39828254035d936764e58902f3",
+  "manifestSha256": "5f995359962f0083d56d182f42b71892d433620fb7de43f589e93c08406ccd31",
+  "result": "All 22 public resolve/main files match the published release payload exactly.",
+  "scope": "HTTP status and byte hashes only; this does not execute the browser application.",
+  "files": [
+    {
+      "path": "LICENSE",
+      "status": 200,
+      "bytes": 1079,
+      "sha256": "81dc914068d140c8ac3591a67f080574e0cf89f3e9dfd6e06a85fb451b144940"
+    },
+    {
+      "path": "LICENSE.txt",
+      "status": 200,
+      "bytes": 1079,
+      "sha256": "81dc914068d140c8ac3591a67f080574e0cf89f3e9dfd6e06a85fb451b144940"
+    },
+    {
+      "path": "NOTICE.txt",
+      "status": 200,
+      "bytes": 755,
+      "sha256": "dac5808b537ecfe3b7ce9906aedd2077c9bae88857067def76aaa0b10faa1aff"
+    },
+    {
+      "path": "README.md",
+      "status": 200,
+      "bytes": 5641,
+      "sha256": "de27a8738a5f1ec56c610fa3e3da599b159c115f228703b7a64c5f0755714210"
+    },
+    {
+      "path": "assets/index-Cy1z3VgL.css",
+      "status": 200,
+      "bytes": 27833,
+      "sha256": "dbceefbdb6bfda102a7d9410d6bd2fb6471b05589d6bf72dc12c41aac02fb96c"
+    },
+    {
+      "path": "assets/index-D51bRqDz.js",
+      "status": 200,
+      "bytes": 76766,
+      "sha256": "242a40ffc574c83acceb6d01db9d35ba2048a55d335ac71ce23f183f36597b74"
+    },
+    {
+      "path": "assets/worker-BYZMN4dD.js",
+      "status": 200,
+      "bytes": 11181,
+      "sha256": "d40cacbc23182c2d3148ecab615e48a532c55d84d6fc1b56e39d7dd1994fc881"
+    },
+    {
+      "path": "examples/README.txt",
+      "status": 200,
+      "bytes": 3007,
+      "sha256": "952fa47bce285cdb8fe2f9ca5f0c2395332c08e03eb054f5220c897ded83933a"
+    },
+    {
+      "path": "examples/optdigits.json",
+      "status": 200,
+      "bytes": 838147,
+      "sha256": "18f281567b4a749dabe3819a427d32d228b85a7226c7785c10a99d88cf0d46d7"
+    },
+    {
+      "path": "fonts/Inter-OFL.txt",
+      "status": 200,
+      "bytes": 4380,
+      "sha256": "262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a"
+    },
+    {
+      "path": "fonts/JetBrainsMono-OFL.txt",
+      "status": 200,
+      "bytes": 4399,
+      "sha256": "b2fe5e8987594e9ffd1d2ca52a2f5d73eb8335243893c5d6254b5ad69269591d"
+    },
+    {
+      "path": "fonts/inter-latin-wght.woff2",
+      "status": 200,
+      "bytes": 48256,
+      "sha256": "3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62"
+    },
+    {
+      "path": "fonts/jetbrains-mono-latin-wght.woff2",
+      "status": 200,
+      "bytes": 40404,
+      "sha256": "18be452724bfdc236c074ca94a249a7f41a86752c7d04ab258ce9ed5651f6a7e"
+    },
+    {
+      "path": "index.html",
+      "status": 200,
+      "bytes": 1149,
+      "sha256": "f5aabfb9c44276f66a115da440610da26f7650ee5899824a5b7f38fcbd9feaf3"
+    },
+    {
+      "path": "licenses/UCI-digits-CC-BY-4.0.txt",
+      "status": 200,
+      "bytes": 648,
+      "sha256": "ce7c56e24670fd086020ddfdf2df7a34426ec6d67e0c8fd17c8cab7147091d95"
+    },
+    {
+      "path": "licenses/calibrated-MIT.txt",
+      "status": 200,
+      "bytes": 1071,
+      "sha256": "cc0c4d3439f6e405ff0681545921da29985ba0eafa4a19bdb343c120d05030be"
+    },
+    {
+      "path": "recipes/export_confidence.py",
+      "status": 200,
+      "bytes": 1763,
+      "sha256": "9e5b3fb1d48ff8171f12718e4a63d57302bef0ff4cd4160c81027d4acdd2e1be"
+    },
+    {
+      "path": "recipes/export_logits.py",
+      "status": 200,
+      "bytes": 2157,
+      "sha256": "48dafcaaf3e58746646ed569817a407f7d7101d60da329292b81d325a7c3d71f"
+    },
+    {
+      "path": "social-preview.png",
+      "status": 200,
+      "bytes": 142448,
+      "sha256": "04958e64f1422201c1e0e8b8ca178ad312a78dbc5d41a0ae8a9668d6d2931b8e"
+    },
+    {
+      "path": "templates/confidence.csv",
+      "status": 200,
+      "bytes": 196,
+      "sha256": "d20eebd858dc3bad9ebc532f4dc5f39ed3ef02ae4f66c8bf38674793d139c392"
+    },
+    {
+      "path": "templates/logits.json",
+      "status": 200,
+      "bytes": 682,
+      "sha256": "6fc72452d329a5b5bbfbc9250da818871135070b6fd92a789d73e2b60cfd1912"
+    },
+    {
+      "path": "manifest.json",
+      "status": 200,
+      "bytes": 4515,
+      "sha256": "5f995359962f0083d56d182f42b71892d433620fb7de43f589e93c08406ccd31"
+    }
+  ],
+  "observedSpaceCommit": "6b7e39ed9b73e6d292e9df1510f96a04336ff0f7",
+  "reportedRuntimeStage": "RUNNING"
+}

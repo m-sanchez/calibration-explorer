@@ -1,0 +1,42 @@
+[
+  {
+    "file": "claude-confidence.html",
+    "bytes": 12203,
+    "sha256": "202a057a9408bb0523df7ec3ae4384dac4727375ea0d6cfa8c77ba1c3f14272d"
+  },
+  {
+    "file": "claude-confidence.json",
+    "bytes": 19142,
+    "sha256": "b6b0572fbd7b6e36aa481a937f784e6480f2e33eb46791da1b6fb99fb3c9d55f"
+  },
+  {
+    "file": "browser-before-test.html",
+    "bytes": 25631,
+    "sha256": "03c44ac57d253d4403854456b7c846e60049b946d33d3d68dc4a1dc2387ff0df"
+  },
+  {
+    "file": "browser-test-only.json",
+    "bytes": 18936,
+    "sha256": "d95c665b622b693044371d17b254fd99d21de04713672fd4f92303fe430308c8"
+  },
+  {
+    "file": "browser-test-only-predictions.csv",
+    "bytes": 216,
+    "sha256": "c15b6473bc17c505428b55deb418980bd62dfd6192268dee36828d4bc09b2ebe"
+  },
+  {
+    "file": "browser-test-only-input.csv",
+    "bytes": 131,
+    "sha256": "4c39d12484afd674929ead1b7e1e98769f0314afdd5731b3af0103534f56af2c"
+  },
+  {
+    "file": "released-reference-assessment.html",
+    "bytes": 26412,
+    "sha256": "6e6046fa746f4159dc10c98d3b898b0d0ad2d3b6e29edee9ea127125817c41ac"
+  },
+  {
+    "file": "hugging-face-verification.json",
+    "bytes": 4754,
+    "sha256": "c32ea78e8d94c82cbce9ffd0dfa2f767d0e3328ad3f3865469e5c5b11a84cfb1"
+  }
+]

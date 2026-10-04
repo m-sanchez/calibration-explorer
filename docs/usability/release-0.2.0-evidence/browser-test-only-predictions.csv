@@ -1,0 +1,5 @@
+id,split,confidence_original,confidence_scaled,correct
+"fixture-01","test","0.9","0.9","true"
+"fixture-02","test","0.9","0.9","false"
+"fixture-03","test","0.7","0.7","true"
+"fixture-04","test","0.6","0.6","false"

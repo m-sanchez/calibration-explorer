@@ -1,0 +1,62 @@
+[
+  {
+    "file": "01-reference.png",
+    "bytes": 92076,
+    "sha256": "aa5c67f15f06cdb951f8e049a68aaf6ce8c99bd5add628abf5f3293e2382466e"
+  },
+  {
+    "file": "02-linked-bin.png",
+    "bytes": 71195,
+    "sha256": "6582e14df612b72a9f1ef1241203d7cec3c6456bb1d0eea1a60ce5c96186d8f8"
+  },
+  {
+    "file": "03-calibration.png",
+    "bytes": 81597,
+    "sha256": "2d8f0d6780e504f99a92ccb1d7143c677849d81eef0257b53b27ff711c884de6"
+  },
+  {
+    "file": "04-policy-lock.png",
+    "bytes": 71310,
+    "sha256": "67a40748fb027cfb4321b75cd802796b0ab039a4e277c38ed2cec29c1a80a1c8"
+  },
+  {
+    "file": "05-test-review.png",
+    "bytes": 67690,
+    "sha256": "ad79416a18b468408283df1dcbd913cc15c1aaefbedc1a5138caa2b3fe99ba62"
+  },
+  {
+    "file": "06-export-preview.png",
+    "bytes": 83798,
+    "sha256": "cd69889c107e8226db6a15b9828a8f40301667c05ca1e0822178fbdb9e141029"
+  },
+  {
+    "file": "reference-workflow-step-by-step.webm",
+    "bytes": 3079632,
+    "sha256": "9a3287fe896f505b0ba4b95d259afea8c80c0a22243a088fa7a05f3abd775f51"
+  },
+  {
+    "file": "reference-workflow-step-by-step.vtt",
+    "bytes": 829,
+    "sha256": "697a5d30c820041485f1fe3313e7290b9cefae3a97748e1112eba25c4543c17c"
+  },
+  {
+    "file": "reference-workflow-text.txt",
+    "bytes": 1165,
+    "sha256": "8e69ef88e1a55ef302557f6c8e8201e828992f0423f5f4fbb134a6206de5f8b1"
+  },
+  {
+    "file": "manifest.json",
+    "bytes": 4980,
+    "sha256": "c30e46d6a2e5cc7f59158a45b40562a0e1fa70a38794b3417202452b0727b080"
+  },
+  {
+    "file": "browser-context.json",
+    "bytes": 572,
+    "sha256": "df49bcb6f195180ec6f4d91eb760c6ccd31d5516a9b0d4c636e516d882382d9d"
+  },
+  {
+    "file": "released-reference-assessment.html",
+    "bytes": 26412,
+    "sha256": "6e6046fa746f4159dc10c98d3b898b0d0ad2d3b6e29edee9ea127125817c41ac"
+  }
+]
