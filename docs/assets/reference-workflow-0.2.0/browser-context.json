@@ -1,0 +1,12 @@
+{
+  "capturedAt": "2026-10-04T08:41:44.593Z",
+  "url": "https://m-sanchez-calibration-explorer.static.hf.space/index.html#workspace",
+  "spaceCommit": "6b7e39ed9b73e6d292e9df1510f96a04336ff0f7",
+  "sourceCommit": "b4d3107c008c9b39828254035d936764e58902f3",
+  "appVersion": "0.2.0",
+  "sourceSha256": "9ce40339840b8e81d3c709af90b81d4e9c5108b53872625f0f932cfaebc0d05f",
+  "previewMatchesActualDownload": true,
+  "operator": "Codex agent",
+  "independentHumanParticipants": 0,
+  "captureType": "Sequential screenshots of actual UI actions, not a real-time video recording"
+}

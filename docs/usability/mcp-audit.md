@@ -22,4 +22,6 @@ The interactive client started before the version bump and retained `calibration
 
 ## Scope
 
+The subsequent [0.2.0 confidence-only check](release-0.2.0-audit.md) used the updated Claude Code 2.1.289 client and the merged release source. Its actual HTML/JSON files and hashes are recorded separately from the earlier 2.1.283 digits session.
+
 The [cross-interface exposure matrix](../exposure-matrix.md) distinguishes shared-controller tests from actual MCP tools/resources and browser observations. Client acceptance establishes an observed integration on this machine, not external adoption, independent-user understanding, or assistive-technology accessibility. Inspection history remains limited to the current server process and cannot establish unseen test data elsewhere.

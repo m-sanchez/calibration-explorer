@@ -1,0 +1,5 @@
+id,confidence,correct,split
+fixture-01,0.9,true,test
+fixture-02,0.9,false,test
+fixture-03,0.7,true,test
+fixture-04,0.6,false,test

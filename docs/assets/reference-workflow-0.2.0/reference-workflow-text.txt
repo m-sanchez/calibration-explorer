@@ -1,0 +1,24 @@
+Calibration Explorer 0.2.0 reference workflow
+
+Silent step-by-step capture of the actual released interface. This is not a real-time recording.
+
+Captured on 4 October 2026 from the public version 0.2.0 using the UCI handwritten-digit reference. These are Codex-operated engineering observations, with zero independent human participants. The 80% threshold is illustrative, not optimised or recommended.
+
+1. Load the reference
+Load the handwritten-digit reference. Policy validation is selected; the 1,797 test rows remain unopened.
+
+2. Inspect a linked reliability bin
+Select original bin 15: 412 predictions, 98.3% mean confidence and 100% observed accuracy.
+
+3. Fit on calibration rows
+Fit temperature using only 574 calibration rows. The fitted value is 0.72598.
+
+4. Lock an illustrative threshold
+Lock an illustrative 80% threshold on policy validation before opening the test split.
+
+5. Review the test comparison
+Review 1,797 test predictions. Accuracy stays at 94.9%; NLL changes from 0.1760 to 0.1575.
+
+6. Preview and save the report
+Preview the test report. Source rows are excluded; the actual HTML download matches this preview.
+

@@ -1,0 +1,25 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.000
+Step 1. Load the handwritten-digit reference. Policy validation is selected; the 1,797 test rows remain unopened.
+
+2
+00:00:06.000 --> 00:00:12.000
+Step 2. Select original bin 15: 412 predictions, 98.3% mean confidence and 100% observed accuracy.
+
+3
+00:00:12.000 --> 00:00:18.000
+Step 3. Fit temperature using only 574 calibration rows. The fitted value is 0.72598.
+
+4
+00:00:18.000 --> 00:00:24.000
+Step 4. Lock an illustrative 80% threshold on policy validation before opening the test split.
+
+5
+00:00:24.000 --> 00:00:30.000
+Step 5. Review 1,797 test predictions. Accuracy stays at 94.9%; NLL changes from 0.1760 to 0.1575.
+
+6
+00:00:30.000 --> 00:00:36.000
+Step 6. Preview the test report. Source rows are excluded; the actual HTML download matches this preview.

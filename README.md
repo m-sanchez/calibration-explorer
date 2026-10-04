@@ -17,6 +17,8 @@ Use the same assessment workflow from an assistant through the [local MCP server
 
 The app evaluates saved predictions; it does not train or run a classifier. It retains failed fits and preserves original results if scaled evaluation fails.
 
+Follow the [short reference walkthrough](docs/reference-workflow.md) for the chart, calibration, policy and export sequence. Its linked audit records distinguish actual client/browser observations from scripted checks.
+
 ## Inputs
 
 | Format | Required fields | Optional fields |
