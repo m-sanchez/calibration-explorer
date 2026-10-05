@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and ideas
+    url: https://github.com/m-sanchez/calibration-explorer/discussions
+    about: Ask how to read a result, prepare a prediction file or set up the MCP server.

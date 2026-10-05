@@ -1,0 +1,42 @@
+name: Feature request
+description: Suggest a change to the web app, the MCP server, the reports or the docs.
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Questions about reading a result or preparing a file fit better in Discussions. Calibration Explorer evaluates saved predictions. It does not train or run a classifier, and the MCP server has only been verified with the Claude Code interactive terminal.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Web app
+        - MCP server or npm package
+        - Reports and exports
+        - Docs
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do
+      description: The task and where the current version gets in the way.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would change
+    validations:
+      required: true
+  - type: textarea
+    id: workaround
+    attributes:
+      label: What you do today instead
+  - type: textarea
+    id: input-shape
+    attributes:
+      label: Prediction file shape
+      description: If it depends on your data, describe the format, row count and class count without any values.
