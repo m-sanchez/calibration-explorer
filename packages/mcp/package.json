@@ -1,0 +1,54 @@
+{
+  "name": "@m-sanchez/calibration-explorer-mcp",
+  "version": "0.2.0",
+  "description": "Local stdio MCP server for Calibration Explorer: compare classifier confidence with accuracy, fit temperature scaling and save reports from your own saved predictions.",
+  "license": "MIT",
+  "author": "Miguel Sanchez <contact@miguelsanchez.co.uk>",
+  "mcpName": "io.github.m-sanchez/calibration-explorer",
+  "type": "module",
+  "bin": {
+    "calibration-explorer-mcp": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "public/examples"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m-sanchez/calibration-explorer.git",
+    "directory": "packages/mcp"
+  },
+  "homepage": "https://github.com/m-sanchez/calibration-explorer/blob/main/docs/mcp.md",
+  "bugs": {
+    "url": "https://github.com/m-sanchez/calibration-explorer/issues"
+  },
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "calibration",
+    "model-evaluation",
+    "temperature-scaling",
+    "classifier",
+    "claude-code"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "prepack": "node scripts/build.mjs",
+    "test": "node --test test/package.test.mjs test/versions.test.mjs",
+    "versions": "node scripts/versions.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.3.0",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "2.3.0",
+    "esbuild": "0.28.2"
+  }
+}

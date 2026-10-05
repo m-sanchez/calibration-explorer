@@ -1,0 +1,44 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.m-sanchez/calibration-explorer",
+  "title": "Calibration Explorer",
+  "description": "Check classifier confidence against accuracy, fit temperature scaling and save local reports.",
+  "version": "0.2.0",
+  "websiteUrl": "https://github.com/m-sanchez/calibration-explorer/blob/main/docs/mcp.md",
+  "repository": {
+    "url": "https://github.com/m-sanchez/calibration-explorer",
+    "source": "github",
+    "id": "1402908024",
+    "subfolder": "packages/mcp"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@m-sanchez/calibration-explorer-mcp",
+      "version": "0.2.0",
+      "runtimeHint": "npx",
+      "transport": {
+        "type": "stdio"
+      },
+      "packageArguments": [
+        {
+          "type": "named",
+          "name": "--input-root",
+          "description": "Existing absolute directory whose prediction CSV or JSON files the server may read. Paths outside it are refused. Repeat for more directories.",
+          "format": "filepath",
+          "isRequired": true,
+          "isRepeated": true
+        },
+        {
+          "type": "named",
+          "name": "--output-root",
+          "description": "Existing absolute directory where the server may create new report folders. It never overwrites files. Repeat for more directories.",
+          "format": "filepath",
+          "isRequired": true,
+          "isRepeated": true
+        }
+      ]
+    }
+  ]
+}

@@ -31,3 +31,31 @@ jobs:
       - run: node scripts/create-review-evidence.ts
       - run: python -m unittest discover -s tests -p test_apply_temperature.py
       - run: node scripts/build-space.ts
+
+  mcp-package:
+    name: MCP package (${{ matrix.os }}, Node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: ['20.0.0', 24]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            packages/mcp/package-lock.json
+      - run: npm ci
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci
+        working-directory: packages/mcp
+      - run: npm test
+        working-directory: packages/mcp
