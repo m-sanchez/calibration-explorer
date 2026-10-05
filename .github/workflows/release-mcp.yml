@@ -1,0 +1,116 @@
+name: Release MCP package
+
+on:
+  push:
+    tags: ['mcp-v*']
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version increment for @m-sanchez/calibration-explorer-mcp
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-mcp
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.event_name == 'push' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    env:
+      PACKAGE: '@m-sanchez/calibration-explorer-mcp'
+      SERVER: io.github.m-sanchez/calibration-explorer
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: ${{ github.event_name == 'workflow_dispatch' }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: npm install --global npm@latest
+      - run: npm ci
+      - run: npm ci
+        working-directory: packages/mcp
+
+      - name: Bump the package version
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: packages/mcp
+        env:
+          BUMP: ${{ inputs.bump }}
+        run: npm version "$BUMP" --no-git-tag-version
+
+      - name: Read the version and check the tag
+        id: version
+        working-directory: packages/mcp
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if [ "$GITHUB_EVENT_NAME" = push ] && [ "$GITHUB_REF_NAME" != "mcp-v$VERSION" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match package version $VERSION." >&2
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Sync server.json and pinned versions
+        run: node packages/mcp/scripts/versions.mjs --write
+
+      - name: Build, pack and test the installed package
+        working-directory: packages/mcp
+        run: npm test
+
+      - name: Commit and tag the release
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          git config user.name "Miguel Sanchez"
+          git config user.email "contact@miguelsanchez.co.uk"
+          git add -u
+          git commit -m "Release calibration-explorer-mcp $VERSION"
+          git tag "mcp-v$VERSION"
+          git push origin HEAD:main "mcp-v$VERSION"
+
+      - name: Publish to npm with trusted publishing
+        working-directory: packages/mcp
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if [ "$(npm view "$PACKAGE@$VERSION" version 2>/dev/null)" = "$VERSION" ]; then
+            echo "$PACKAGE@$VERSION is already on npm; skipping npm publish."
+          else
+            npm publish --access public
+          fi
+          for _ in $(seq 1 30); do
+            [ "$(npm view "$PACKAGE@$VERSION" version 2>/dev/null)" = "$VERSION" ] && exit 0
+            sleep 10
+          done
+          echo "$PACKAGE@$VERSION is not visible on npm yet." >&2
+          exit 1
+
+      - name: Install mcp-publisher
+        run: |
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+          ./mcp-publisher --version
+
+      - name: Publish to the MCP Registry
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          ./mcp-publisher validate packages/mcp/server.json
+          STATUS=$(curl -s -o /dev/null -w '%{http_code}' "https://registry.modelcontextprotocol.io/v0.1/servers/${SERVER/\//%2F}/versions/$VERSION")
+          if [ "$STATUS" = 200 ]; then
+            echo "$SERVER $VERSION is already in the MCP Registry; skipping."
+          elif [ "$STATUS" = 404 ]; then
+            ./mcp-publisher login github-oidc
+            ./mcp-publisher publish packages/mcp/server.json
+          else
+            echo "MCP Registry lookup returned HTTP $STATUS." >&2
+            exit 1
+          fi
