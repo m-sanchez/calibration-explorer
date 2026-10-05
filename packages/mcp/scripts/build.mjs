@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { copyFileSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
@@ -32,6 +33,8 @@ const commit = pinned[1];
 const locked = appLock.packages["node_modules/@m-sanchez/calibrated"];
 assert.ok(locked.resolved.endsWith(`#${commit}`), "package-lock.json resolves @m-sanchez/calibrated to a different commit.");
 assert.equal(libraryPackage.version, locked.version, "Installed @m-sanchez/calibrated differs from package-lock.json. Run npm ci in the repository root.");
+const installed = json(join(repoRoot, "node_modules/.package-lock.json")).packages["node_modules/@m-sanchez/calibrated"];
+assert.ok(installed?.resolved?.endsWith(`#${commit}`), "Installed @m-sanchez/calibrated comes from a different commit. Run npm ci in the repository root.");
 const versionSource = readFileSync(join(repoRoot, "src/version.ts"), "utf8");
 assert.ok(versionSource.includes(`numericalRevision = "${commit}"`), "src/version.ts records a different numerical commit.");
 assert.ok(versionSource.includes(`numericalVersion = "${libraryPackage.version}"`), "src/version.ts records a different numerical version.");
@@ -40,7 +43,12 @@ for (const name of Object.keys(pkg.dependencies)) {
 }
 assert.equal(readFileSync(join(pkgRoot, "LICENSE"), "utf8"), readFileSync(join(repoRoot, "LICENSE"), "utf8"), "packages/mcp/LICENSE differs from the repository LICENSE.");
 
-const appSourceSha256 = treeHash(repoRoot, ["src", "mcp", "package.json", "package-lock.json"]);
+const hashedSources = ["src", "mcp", "package.json", "package-lock.json"];
+if (process.env.npm_command === "publish") {
+  const changes = execFileSync("git", ["status", "--porcelain", "--", ...hashedSources], { cwd: repoRoot, encoding: "utf8" });
+  assert.equal(changes, "", `Commit or discard these changes before publishing, so the recorded hashes match a checkout:\n${changes}`);
+}
+const appSourceSha256 = treeHash(repoRoot, hashedSources);
 const numericalDistributionSha256 = treeHash(library, ["dist"]);
 const runtimeHashes = new Map([
   ['await treeHash(project, ["src", "mcp", "package.json", "package-lock.json"])', appSourceSha256],

@@ -24,7 +24,7 @@ Save this configuration, replacing both directories with absolute paths that alr
 }
 ```
 
-Then launch `claude --mcp-config calibration.mcp.json --strict-mcp-config` and check `/mcp`. The verified client is the Claude Code interactive terminal; other MCP hosts are not claimed as verified. Node.js 20 or newer is required.
+Then launch `claude --mcp-config calibration.mcp.json --strict-mcp-config` and check `/mcp`. The verified client is the Claude Code interactive terminal, tested against the server run from a checkout; this npm route and the plugin have passed the clean-install test suite but not yet a full session in Claude Code. Other MCP hosts are not claimed as verified. Node.js 20 or newer is required.
 
 `--input-root` and `--output-root` are required and repeatable. Paths outside them are refused, reports go into new folders only, and existing files are never overwritten. `--help` and `--version` print and exit.
 

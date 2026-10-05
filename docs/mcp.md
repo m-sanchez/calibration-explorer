@@ -60,7 +60,7 @@ Launch `claude --mcp-config calibration.mcp.json --strict-mcp-config` and check 
 
 The package is built from [`packages/mcp`](../packages/mcp). Its `dist/cli.js` is a readable, unminified bundle of `mcp/server.ts`, the shared `src` modules and `@m-sanchez/calibrated` from the commit pinned in `package.json`. The MCP SDK and zod remain exact-pinned runtime dependencies. Because the installed package has no source tree to hash, the build computes the core source and numerical distribution hashes from the checkout and writes them into the bundle. Reports therefore record the same values as a checkout of the same commit; for 0.2.0 they are the `d4f43524…` source hash and `3331be18…` distribution hash recorded in the [0.2.0 evidence](usability/release-0.2.0-audit.md).
 
-The [Claude Code plugin](../plugins/calibration-explorer) runs the same pinned `npx` command with both roots set to `${CLAUDE_PROJECT_DIR}`, so the server reads and writes only inside the current project:
+The [Claude Code plugin](../plugins/calibration-explorer) runs the same pinned `npx` command with both roots set to `${CLAUDE_PROJECT_DIR}`, so the server reads and writes only inside the directory Claude Code was started in:
 
 ```text
 /plugin marketplace add m-sanchez/calibration-explorer

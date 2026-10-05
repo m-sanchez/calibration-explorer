@@ -13,8 +13,8 @@ assessment reports. It does not train or run a classifier.
 ${usage}
 
 Options:
-  --input-root DIRECTORY   Existing directory whose prediction files may be read. Repeatable.
-  --output-root DIRECTORY  Existing directory where new report folders may be created. Repeatable.
+  --input-root DIRECTORY   Absolute path to an existing directory whose prediction files may be read. Repeatable.
+  --output-root DIRECTORY  Absolute path to an existing directory where new report folders may be created. Repeatable.
   --help, -h               Print this help and exit.
   --version                Print the version and exit.
 
