@@ -1,0 +1,114 @@
+{
+  "source": "Reference values recorded in docs/usability/reproduction.md and docs/usability/mcp-evidence/sdk-verification.json.",
+  "tolerance": 1e-10,
+  "input": {
+    "sha256": "18f281567b4a749dabe3819a427d32d228b85a7226c7785c10a99d88cf0d46d7",
+    "kind": "logits",
+    "rowCount": 2945,
+    "classCount": 10,
+    "splitCounts": {
+      "calibration": 574,
+      "policy_validation": 574,
+      "test": 1797,
+      "exploration": 0
+    }
+  },
+  "temperature": 0.7259783904070843,
+  "policyValidation": {
+    "n": 574,
+    "threshold": 0.8,
+    "decision": {
+      "accepted": 529,
+      "abstained": 45,
+      "errors": 2
+    }
+  },
+  "test": {
+    "status": "Policy locked before test inspection in this session",
+    "n": 1797,
+    "before": {
+      "accuracy": 0.9488035614913745,
+      "nll": 0.17595188348336863,
+      "ece": 0.03654894805641917
+    },
+    "after": {
+      "accuracy": 0.9488035614913745,
+      "nll": 0.15752642621016594,
+      "ece": 0.01007905702195184
+    },
+    "decision": {
+      "accepted": 1635,
+      "abstained": 162,
+      "errors": 31
+    }
+  },
+  "report": {
+    "files": [
+      "assessment.html",
+      "assessment.json",
+      "predictions.csv"
+    ],
+    "jsonKeys": [
+      "schemaVersion",
+      "generatedAt",
+      "software",
+      "data",
+      "configuration",
+      "status",
+      "policy",
+      "fit",
+      "fitAttempt",
+      "learning",
+      "evaluationFailure",
+      "before",
+      "after",
+      "decision",
+      "riskCurve",
+      "interpretation",
+      "limitations"
+    ],
+    "measureKeys": [
+      "n",
+      "accuracy",
+      "meanConfidence",
+      "ece",
+      "nll",
+      "bins"
+    ],
+    "softwareKeys": [
+      "app",
+      "numericalLibrary",
+      "upstreamCommit",
+      "appSourceSha256",
+      "numericalDistributionSha256",
+      "interface"
+    ],
+    "configuration": {
+      "split": "test",
+      "bins": 15,
+      "strategy": "equal-width",
+      "temperature": 0.7259783904070843,
+      "threshold": 0.8,
+      "group": null
+    },
+    "policy": {
+      "testViewed": true,
+      "changedAfterTest": false,
+      "locked": {
+        "temperature": 0.7259783904070843,
+        "threshold": 0.8
+      }
+    },
+    "binCount": 15,
+    "riskCurvePoints": 101,
+    "htmlSections": [
+      "Findings",
+      "Confidence and correctness",
+      "Acceptance at 80.0%",
+      "Configuration and provenance",
+      "Limits of this assessment"
+    ],
+    "csvHeader": "id,split,confidence_original,confidence_scaled,correct",
+    "csvRows": 1797
+  }
+}
