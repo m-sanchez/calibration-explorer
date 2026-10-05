@@ -1,0 +1,23 @@
+{
+  "name": "calibration-explorer",
+  "displayName": "Calibration Explorer",
+  "version": "0.2.0",
+  "description": "Check whether saved classifier confidence matches accuracy, fit temperature scaling and save calibration reports inside the current project.",
+  "author": {
+    "name": "Miguel Sanchez",
+    "email": "contact@miguelsanchez.co.uk",
+    "url": "https://miguelsanchez.co.uk"
+  },
+  "homepage": "https://github.com/m-sanchez/calibration-explorer/blob/main/docs/mcp.md",
+  "repository": "https://github.com/m-sanchez/calibration-explorer",
+  "license": "MIT",
+  "keywords": [
+    "calibration",
+    "model-evaluation",
+    "temperature-scaling",
+    "classifier",
+    "mcp"
+  ],
+  "documentationUrl": "https://github.com/m-sanchez/calibration-explorer/blob/main/docs/mcp.md",
+  "supportUrl": "https://github.com/m-sanchez/calibration-explorer/issues"
+}

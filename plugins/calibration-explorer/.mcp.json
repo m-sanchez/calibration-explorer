@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "calibration": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@m-sanchez/calibration-explorer-mcp@0.2.0",
+        "--input-root",
+        "${CLAUDE_PROJECT_DIR}",
+        "--output-root",
+        "${CLAUDE_PROJECT_DIR}"
+      ]
+    }
+  }
+}

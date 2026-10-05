@@ -23,6 +23,8 @@ Check whether your classifier’s confidence matches how often it is correct. Im
 
 [Website copy](https://miguelsanchez.co.uk/calibration-explorer/) · [Worked example](https://miguelsanchez.co.uk/writing/calibration-explorer-accuracy-and-confidence/) · [Source and reproduction instructions](https://github.com/m-sanchez/calibration-explorer) · [Numerical library](https://github.com/m-sanchez/calibrated)
 
+Related Hub collection: [Evaluation tools and baselines](https://huggingface.co/collections/m-sanchez/evaluation-tools-and-baselines-6ac382227ea49323315592f1).
+
 ## Inputs and workflow
 
 - CSV requires unique `id`, `confidence` from 0 to 1, and `correct` as true/false or 1/0. Optional fields are `split` and `group`; missing splits become `exploration`.

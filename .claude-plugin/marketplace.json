@@ -1,0 +1,16 @@
+{
+  "name": "calibration-explorer",
+  "description": "Calibration Explorer's local MCP server packaged as a Claude Code plugin.",
+  "owner": {
+    "name": "Miguel Sanchez",
+    "email": "contact@miguelsanchez.co.uk",
+    "url": "https://miguelsanchez.co.uk"
+  },
+  "plugins": [
+    {
+      "name": "calibration-explorer",
+      "source": "./plugins/calibration-explorer",
+      "description": "Check whether saved classifier confidence matches accuracy, fit temperature scaling and save calibration reports inside the current project."
+    }
+  ]
+}
