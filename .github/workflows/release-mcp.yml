@@ -157,13 +157,17 @@ jobs:
       - name: Pack the tag commit
         if: steps.version.outputs.published == 'false'
         working-directory: packages/mcp
-        run: npm pack --pack-destination "$RUNNER_TEMP/package"
+        run: |
+          mkdir -p "$RUNNER_TEMP/package"
+          npm pack --pack-destination "$RUNNER_TEMP/package"
 
       - name: Download the already published tarball
         if: steps.version.outputs.published == 'true'
         env:
           VERSION: ${{ steps.version.outputs.version }}
-        run: npm pack "$PACKAGE@$VERSION" --pack-destination "$RUNNER_TEMP/package"
+        run: |
+          mkdir -p "$RUNNER_TEMP/package"
+          npm pack "$PACKAGE@$VERSION" --pack-destination "$RUNNER_TEMP/package"
 
       - name: Run the clean-install acceptance suite on that tarball
         working-directory: packages/mcp
