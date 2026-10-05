@@ -1,0 +1,65 @@
+name: Bug report
+description: A wrong result, an error or a crash in the web app, the MCP server or the npm package.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue is public. Do not paste real predictions, exported reports, row IDs, labels, scores, class names, private paths or credentials. The bundled digits example or a few invented rows are usually enough to show the problem.
+  - type: dropdown
+    id: route
+    attributes:
+      label: Route
+      options:
+        - Web app (Hugging Face Space or miguelsanchez.co.uk)
+        - MCP server from npm (npx, claude mcp add or the Claude Code plugin)
+        - MCP server from a checkout (node mcp/cli.ts)
+        - Web app from a checkout (npm run dev or npm run preview)
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The version in the web app footer, the npm version pinned in your MCP configuration, or the commit of your checkout.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser and OS for the web app. Node.js version, OS and MCP client with its version for the MCP server.
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Numbered steps from a fresh start. For the MCP server, include the request you gave the client or the tool calls in order.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual
+      description: What happened instead. Paste the exact error text with private paths replaced.
+    validations:
+      required: true
+  - type: textarea
+    id: input-shape
+    attributes:
+      label: Prediction file shape
+      description: Describe the file without any values. Format (confidence CSV or logit JSON), columns or fields present, row count, class count and which splits it has.
+      placeholder: "Logit JSON, array of rows, 10 classes, 3,000 rows, splits: calibration, policy_validation, test"
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Public disclosure check
+      options:
+        - label: This issue contains no private prediction data, identifying details or credentials.
+          required: true

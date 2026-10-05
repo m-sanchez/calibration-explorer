@@ -58,6 +58,12 @@ The npm package `@m-sanchez/calibration-explorer-mcp` runs the same server witho
 
 Launch `claude --mcp-config calibration.mcp.json --strict-mcp-config` and check `/mcp`. Keep the exact version pin; `-y` only skips npx's download prompt. Arguments, root checks and refusals are the same as `mcp/cli.ts`; `--help` and `--version` print and exit.
 
+To register the same command with Claude Code instead, run this in the project directory. It is stored in Claude Code's local scope for that directory, and `claude mcp remove calibration -s local` removes it.
+
+```text
+claude mcp add calibration -- npx -y @m-sanchez/calibration-explorer-mcp@0.2.0 --input-root ABSOLUTE_PREDICTION_DIRECTORY --output-root ABSOLUTE_REPORT_DIRECTORY
+```
+
 The package is built from [`packages/mcp`](../packages/mcp). Its `dist/cli.js` is a readable, unminified bundle of `mcp/server.ts`, the shared `src` modules and `@m-sanchez/calibrated` from the commit pinned in `package.json`. The MCP SDK and zod remain exact-pinned runtime dependencies. Because the installed package has no source tree to hash, the build computes the core source and numerical distribution hashes from the checkout and writes them into the bundle. Reports therefore record the same values as a checkout of the same commit; for 0.2.0 they are the `d4f43524…` source hash and `3331be18…` distribution hash recorded in the [0.2.0 evidence](usability/release-0.2.0-audit.md).
 
 The [Claude Code plugin](../plugins/calibration-explorer) runs the same pinned `npx` command with both roots set to `${CLAUDE_PROJECT_DIR}`, so the server reads and writes only inside the directory Claude Code was started in:

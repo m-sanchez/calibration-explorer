@@ -13,6 +13,7 @@ const jsonFields = {
   "plugins/calibration-explorer/.claude-plugin/plugin.json": [["version"]],
 };
 const pinnedFiles = [
+  "README.md",
   "docs/mcp.md",
   "packages/mcp/Dockerfile",
   "packages/mcp/README.md",

@@ -1,14 +1,20 @@
 # Calibration Explorer
 
-[![Calibration Explorer](docs/assets/social-preview.svg)](https://huggingface.co/spaces/m-sanchez/calibration-explorer)
+Calibration Explorer is for anyone with saved classifier predictions and known outcomes who wants to check whether the model's confidence matches how often it is correct, fit temperature scaling and export a report.
 
-Check whether your classifier’s confidence matches how often it is correct. Import saved predictions with known outcomes, inspect calibration, and export a report.
+**Try it in the browser:** [open the workbench](https://huggingface.co/spaces/m-sanchez/calibration-explorer). It opens with a handwritten-digits example loaded, and your own CSV or JSON is processed in the browser.
 
-[Open the workbench](https://huggingface.co/spaces/m-sanchez/calibration-explorer) · [Website copy](https://miguelsanchez.co.uk/calibration-explorer/) · [Worked example](https://miguelsanchez.co.uk/writing/calibration-explorer-accuracy-and-confidence/) · [Numerical library](https://github.com/m-sanchez/calibrated)
+**Try it from Claude Code:** add the [local MCP server](docs/mcp.md) for the directory you run this in, using two existing absolute directories. It needs Node.js 20 or newer.
 
-Use the same assessment workflow from an assistant through the [local MCP server](docs/mcp.md). It reads selected local files and saves reports directly into your project. The first client target is Claude Code interactive terminal 2.1.283. Raw inputs stay local by default; returned summaries can reach the client's model provider.
+```sh
+claude mcp add calibration -- npx -y @m-sanchez/calibration-explorer-mcp@0.2.0 --input-root ABSOLUTE_PREDICTION_DIRECTORY --output-root ABSOLUTE_REPORT_DIRECTORY
+```
 
-To run the server without a checkout, see [Install from npm](docs/mcp.md#install-from-npm) for the pinned `npx` configuration and Claude Code plugin.
+<a href="https://huggingface.co/spaces/m-sanchez/calibration-explorer"><img src="docs/assets/reference-workflow-0.2.0/02-linked-bin.png" width="720" alt="Reliability diagram for the handwritten-digits reference on 574 policy-validation rows, with bin 15 selected: 412 predictions, 98.3% mean confidence and 100% observed accuracy."></a>
+
+[Website copy](https://miguelsanchez.co.uk/calibration-explorer/) · [Worked example](https://miguelsanchez.co.uk/writing/calibration-explorer-accuracy-and-confidence/) · [Numerical library](https://github.com/m-sanchez/calibrated)
+
+The MCP server reads selected local files and saves reports directly into your project. The first client target is Claude Code interactive terminal 2.1.283. Raw inputs stay local by default; returned summaries can reach the client's model provider. `claude mcp add` stores the server in Claude Code's local scope for that directory, and `claude mcp remove calibration -s local` removes it. [Install from npm](docs/mcp.md#install-from-npm) has the session-only JSON configuration and the Claude Code plugin.
 
 ## Workflow
 
