@@ -2,7 +2,7 @@ import { after, before, describe, test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync, spawn, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { copyFileSync, existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { copyFileSync, existsSync, readFileSync, readdirSync, realpathSync, statSync } from "node:fs";
 import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, dirname, join, relative, resolve } from "node:path";
@@ -160,7 +160,7 @@ describe("installed package", { timeout: 600000 }, () => {
       const saved = await call("create_report", { run: run.run, revision: run.revision, directory: outputRoot, name: "worked-example", predictionCsv: true });
       assert.deepEqual(saved.artifacts.map((artifact) => basename(artifact.path)), fixture.report.files);
       for (const artifact of saved.artifacts) {
-        assert.equal(dirname(artifact.path), join(outputRoot, "worked-example"));
+        assert.equal(dirname(artifact.path), realpathSync.native(join(outputRoot, "worked-example")));
         assert.equal(sha256(await readFile(artifact.path)), artifact.sha256);
       }
       const record = JSON.parse(await readFile(saved.artifacts[1].path, "utf8"));
@@ -221,7 +221,7 @@ describe("installed package", { timeout: 600000 }, () => {
       assert.deepEqual(await readdir(outside), ["input.csv"]);
       assert.ok(!existsSync(join(work, "escape")));
       const saved = await call("create_report", { run: run.run, revision: run.revision, directory: outputRoot, name: "after-refusals" });
-      assert.equal(dirname(saved.artifacts[0].path), join(outputRoot, "after-refusals"));
+      assert.equal(dirname(saved.artifacts[0].path), realpathSync.native(join(outputRoot, "after-refusals")));
     } finally {
       await client.close();
     }
