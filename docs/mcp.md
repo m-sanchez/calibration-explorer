@@ -36,6 +36,39 @@ The resulting configuration has this structure, with real paths filled in by the
 
 This session-scoped launch does not edit your global client configuration. Check `/mcp` for the calibration server. Use the client's ordinary approval mode, not bypass flags or an elicitation hook that answers on your behalf.
 
+## Install from npm
+
+The npm package `@m-sanchez/calibration-explorer-mcp` runs the same server without a checkout. It needs Node 20 or newer; CI tests 20.0.0 and 24 on Linux and Windows. Save this as `calibration.mcp.json`, with existing absolute directories in place of the placeholders:
+
+```json
+{
+  "mcpServers": {
+    "calibration": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y", "@m-sanchez/calibration-explorer-mcp@0.2.0",
+        "--input-root", "ABSOLUTE_PREDICTION_DIRECTORY",
+        "--output-root", "ABSOLUTE_REPORT_DIRECTORY"
+      ]
+    }
+  }
+}
+```
+
+Launch `claude --mcp-config calibration.mcp.json --strict-mcp-config` and check `/mcp`. Keep the exact version pin; `-y` only skips npx's download prompt. Arguments, root checks and refusals are the same as `mcp/cli.ts`; `--help` and `--version` print and exit.
+
+The package is built from [`packages/mcp`](../packages/mcp). Its `dist/cli.js` is a readable, unminified bundle of `mcp/server.ts`, the shared `src` modules and `@m-sanchez/calibrated` from the commit pinned in `package.json`. The MCP SDK and zod remain exact-pinned runtime dependencies. Because the installed package has no source tree to hash, the build computes the core source and numerical distribution hashes from the checkout and writes them into the bundle. Reports therefore record the same values as a checkout of the same commit; for 0.2.0 they are the `d4f43524…` source hash and `3331be18…` distribution hash recorded in the [0.2.0 evidence](usability/release-0.2.0-audit.md).
+
+The [Claude Code plugin](../plugins/calibration-explorer) runs the same pinned `npx` command with both roots set to `${CLAUDE_PROJECT_DIR}`, so the server reads and writes only inside the current project:
+
+```text
+/plugin marketplace add m-sanchez/calibration-explorer
+/plugin install calibration-explorer@calibration-explorer
+```
+
+Claude Code 2.1.289 on Windows loaded this plugin from a local directory, substituted the project directory and connected to a locally packed tarball. The full tool workflow through the plugin and the npm registry download have not been exercised. [`packages/mcp/Dockerfile`](../packages/mcp/Dockerfile) installs the same published version with `/data/input` and `/data/output` as roots; reports written there record container paths.
+
 ## One complete workflow
 
 Start with this request, replacing the output path with the configured directory:
@@ -83,7 +116,7 @@ MCP evidence records the server/core source hash and numerical distribution hash
 node --test tests/mcp.test.ts tests/exposure-matrix.test.ts tests/workflow.test.ts
 ```
 
-The stdio check starts a real SDK client and server subprocess, tests accepted and declined disclosure responses, verifies confidence/logit workflows and file contents, and writes `.cache/mcp-verification.json`. Those answers are scripted protocol checks, not human usability evidence. [The exposure matrix](exposure-matrix.md) identifies the shared-controller checks and actual tool/resource checks separately. Independent human participants remain zero.
+The stdio check starts a real SDK client and server subprocess, tests accepted and declined disclosure responses, verifies confidence/logit workflows and file contents, and writes `.cache/mcp-verification.json`. Those answers are scripted protocol checks, not human usability evidence. For the npm package, `npm ci` and then `npm test` in `packages/mcp` build and pack it, install the tarball into a temporary project, and drive the installed bin over stdio with the same SDK client on the digits reference. [The exposure matrix](exposure-matrix.md) identifies the shared-controller checks and actual tool/resource checks separately. Independent human participants remain zero.
 
 The [actual-client integration record](usability/mcp-audit.md) separately documents an agent-operated Claude Code 2.1.283 terminal session, its rendered disclosure controls, and saved reports. The final [0.2.0 confidence-only check](usability/release-0.2.0-audit.md) used Claude Code 2.1.289 after a client update.
 

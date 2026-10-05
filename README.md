@@ -8,6 +8,8 @@ Check whether your classifier’s confidence matches how often it is correct. Im
 
 Use the same assessment workflow from an assistant through the [local MCP server](docs/mcp.md). It reads selected local files and saves reports directly into your project. The first client target is Claude Code interactive terminal 2.1.283. Raw inputs stay local by default; returned summaries can reach the client's model provider.
 
+To run the server without a checkout, see [Install from npm](docs/mcp.md#install-from-npm) for the pinned `npx` configuration and Claude Code plugin.
+
 ## Workflow
 
 - **Inspect:** compare confidence and accuracy with reliability bins, ECE, and sample counts. Four controlled examples illustrate sampling variation, binning, temperature scaling, and different group distortions.
